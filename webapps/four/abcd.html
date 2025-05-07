@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>Form page 1</title>
+<script>
+function validateForm(frm)
+{
+var name = frm.name.value.trim();
+if(name.length==0)
+{
+alert('Name required');
+frm.name.focus();
+return false;
+}
+return true;
+}
+</script>
+</head>
+<body>
+<form action='/four/aaa' onsubmit='return validateForm(this)'>
+Name
+<input type='text' id='name' name='name'>
+<button type='submit'>Next</button>
+</form>
+</body>
+</html>
