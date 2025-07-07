@@ -109,6 +109,14 @@
 <url-pattern>/addEmployee</url-pattern>
 </servlet-mapping>
 
+<servlet>
+<servlet-name>EditEmployee</servlet-name>
+<servlet-class>com.thinking.machines.hr.servlets.EditEmployee</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>EditEmployee</servlet-name>
+<url-pattern>/editEmployee</url-pattern>
+</servlet-mapping>
 </web-app>
 
 

@@ -5,7 +5,51 @@ import java.math.*;
 import java.text.*;
 public class EmployeeDAO
 {
+public EmployeeDTO getByEmployeeId(String employeeId) throws DAOException
+{
+if(employeeId.charAt(0) == 'A') employeeId = employeeId.substring(1); //to convert A100001 to 100001
+try
+{
+Connection connection = DAOConnection.getConnection();
+PreparedStatement prepareStatement = connection.prepareStatement("SELECT employee.id,employee.name,employee.designation_code,designation.title,employee.date_of_birth,employee.gender,employee.is_indian,employee.basic_salary,employee.pan_number,employee.aadhar_card_number FROM employee INNER JOIN designation ON employee.designation_code=designation.code WHERE id=?");
+prepareStatement.setString(1,employeeId);
+ResultSet resultSet;
+resultSet = prepareStatement.executeQuery();
+if(resultSet.next()==false)
+{ 
+resultSet.close();
+prepareStatement.close();
+connection.close();
+throw new DAOException("Invalid employee id");
+}
 
+int employeeIdInt = resultSet.getInt("id");
+String name = resultSet.getString("name").trim();
+int designationCode = resultSet.getInt("designation_code");
+String title = resultSet.getString("title").trim();
+java.sql.Date dateOfBirth = resultSet.getDate("date_of_birth");
+String gender = resultSet.getString("gender");
+boolean isIndian = resultSet.getBoolean("is_indian");
+BigDecimal basicSalary = resultSet.getBigDecimal("basic_salary");
+String panNumber = resultSet.getString("pan_number").trim();
+String aadharCardNumber = resultSet.getString("aadhar_card_number").trim();
+EmployeeDTO employeeDTO = new EmployeeDTO();
+employeeDTO.setEmployeeId("A" + employeeIdInt);
+employeeDTO.setName(name);
+employeeDTO.setDesignationCode(designationCode);
+employeeDTO.setTitle(title);
+employeeDTO.setDateOfBirth(dateOfBirth);
+employeeDTO.setGender(gender);
+employeeDTO.setIsIndian(isIndian);
+employeeDTO.setBasicSalary(basicSalary);
+employeeDTO.setPANNumber(panNumber);
+employeeDTO.setAadharCardNumber(aadharCardNumber);
+return employeeDTO;
+}catch(SQLException sqlException)
+{
+throw new DAOException(sqlException.getMessage());
+}
+}
 public boolean designationCodeExists(int designationCode) throws DAOException
 {
 try

@@ -1,5 +1,6 @@
 package com.thinking.machines.hr.dl;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 public class DAOConnection
 {
 private DAOConnection() //no one need make object

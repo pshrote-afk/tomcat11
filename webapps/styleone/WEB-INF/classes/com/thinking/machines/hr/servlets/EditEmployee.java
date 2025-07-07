@@ -4,6 +4,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
 import java.util.*;
+import java.text.*;
+import java.math.*;
 public class EditEmployee extends HttpServlet
 {
 public void doGet(HttpServletRequest request,HttpServletResponse response)
@@ -14,8 +16,22 @@ public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
 try
 {
-
-
+SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+String employeeId = request.getParameter("employeeId");
+// get other info by employeeId
+EmployeeDAO employeeDAO = new EmployeeDAO();
+EmployeeDTO employeeDTO;
+employeeDTO = employeeDAO.getByEmployeeId(employeeId);
+employeeId = employeeDTO.getEmployeeId();
+String name = employeeDTO.getName();
+int designationCode = employeeDTO.getDesignationCode();
+String title = employeeDTO.getTitle(); //not needed in this case
+java.util.Date dateOfBirth = employeeDTO.getDateOfBirth();
+String gender = employeeDTO.getGender();
+Boolean isIndian = employeeDTO.getIsIndian();
+BigDecimal basicSalary = employeeDTO.getBasicSalary();
+String panNumber = employeeDTO.getPANNumber();
+String aadharCardNumber = employeeDTO.getAadharCardNumber();
 
 DesignationDAO designationDAO;
 designationDAO = new DesignationDAO();
@@ -130,9 +146,9 @@ pw.println("");
 pw.println("if(firstInvalidField!=null) firstInvalidField.focus();");
 pw.println("return isValid;");
 pw.println("}");
-pw.println("function cancelEmployeeAddition()");
+pw.println("function cancelEmployeeUpdation()");
 pw.println("{");
-pw.println("document.getElementById('cancelEmployeeAdditionForm').submit();");
+pw.println("document.getElementById('cancelEmployeeUpdationForm').submit();");
 pw.println("}");
 pw.println("</script>");
 pw.println("</head>");
@@ -153,12 +169,12 @@ pw.println("</div><!-- left panel ends here -->");
 pw.println("<!-- right panel starts here -->");
 pw.println("<div style='height:65vh;margin-left:105px;margin-right:5px;margin-bottom:5px;margin-top:5px;padding:5px;border:1px solid black'>");
 pw.println("<b>Employee (Add Module)</b><br>");
-pw.println("<form method='post' action='/styleone/addEmployee' onsubmit='return validateForm(this)'>");
+pw.println("<form method='post' action='/styleone/updateEmployee' onsubmit='return validateForm(this)'>");
 pw.println("<table>");
 pw.println("<tr>");
 pw.println("<td>Name</td>");
 pw.println("<td>");
-pw.println("<input type='text' id='name' name='name' maxlength='35' size='36'>");
+pw.println("<input type='text' id='name' name='name' maxlength='35' size='36' value='"+name+"'> ");
 pw.println("<span id='nameErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
@@ -168,9 +184,12 @@ pw.println("<td>");
 
 pw.println("<select id='designationCode' name='designationCode'>");
 pw.println("<option value='-1'>&lt;Select Designation&gt;</option>");
+int code;
 for(DesignationDTO designationDTO:designations)
 {
-pw.println("<option value='"+designationDTO.getCode()+"'>"+designationDTO.getTitle()+"</option>");
+code = designationDTO.getCode();
+if(code==designationCode) pw.println("<option selected value='"+code+"'>"+designationDTO.getTitle()+"</option>");
+pw.println("<option value='"+code+"'>"+designationDTO.getTitle()+"</option>");
 }
 pw.println("</select>");
 pw.println("<span id='designationCodeErrorSection' style='color:red'></span>");
@@ -179,43 +198,59 @@ pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Date of birth</td>");
 pw.println("<td>");
-pw.println("<input type='date' id='dateOfBirth' name='dateOfBirth' value='1970-01-01'>");
+String dateOfBirthString = simpleDateFormat.format(dateOfBirth); 
+pw.println("<input type='date' id='dateOfBirth' name='dateOfBirth' value='"+dateOfBirthString+"'>");
 pw.println("<span id='dateOfBirthErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Gender</td>");
+if(gender.equals("M"))
+{
+pw.println("<td><input checked type='radio' id='male' name='gender' value='M'>Male");
+}
+else
+{
 pw.println("<td><input type='radio' id='male' name='gender' value='M'>Male");
+}
 pw.println("&nbsp;&nbsp;&nbsp;&nbsp;");
+if(gender.equals("F"))
+{
+pw.println("<input checked type='radio' id='female' name='gender' value='F'>Female");
+}
+else
+{
 pw.println("<input type='radio' id='female' name='gender' value='F'>Female");
+}
 pw.println("<span id='genderErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Indian?</td>");
 pw.println("<td>");
-pw.println("<input type='checkbox' id='isIndian' name='isIndian' value='Y'>");
+if(isIndian) pw.println("<input checked type='checkbox' id='isIndian' name='isIndian' value='Y'>");
+else pw.println("<input type='checkbox' id='isIndian' name='isIndian' value='Y'>");
 pw.println("<span id='isIndianErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Basic salary</td>");
 pw.println("<td>");
-pw.println("<input type='text' id='basicSalary' name='basicSalary' maxlength='12' size='13' style='text-align:right'>");
+pw.println("<input type='text' id='basicSalary' name='basicSalary' maxlength='12' size='13' style='text-align:right' value='"+basicSalary.toPlainString()+"'>");
 pw.println("<span id='basicSalaryErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>PAN number</td>");
 pw.println("<td>");
-pw.println("<input type='text' id='panNumber' name='panNumber' maxlength='15' size='16'>");
+pw.println("<input type='text' id='panNumber' name='panNumber' maxlength='15' size='16' value='"+panNumber+"'>");
 pw.println("<span id='panNumberErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Aadhar Card Number</td>");
 pw.println("<td>");
-pw.println("<input type='text' id='aadharCardNumber' name='aadharCardNumber' maxlength='15' size='16'>");
+pw.println("<input type='text' id='aadharCardNumber' name='aadharCardNumber' maxlength='15' size='16' value='"+aadharCardNumber+"'>");
 pw.println("<span id='aadharCardNumberErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
@@ -228,11 +263,11 @@ pw.println("<td>");
 pw.println("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 pw.println("</td>");
 pw.println("<td>");
-pw.println("<button type='submit'>Add</button>");
+pw.println("<button type='submit'>Update</button>");
 pw.println("</form>");
 pw.println("</td>");
 pw.println("<td>");
-pw.println("<button type='button' onclick='cancelEmployeeAddition()'>Cancel</button>");
+pw.println("<button type='button' onclick='cancelEmployeeUpdation()'>Cancel</button>");
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("</table>");
@@ -244,7 +279,7 @@ pw.println("&copy; Thinking Machines 2025");
 pw.println("</div> <!-- footer ends here -->");
 pw.println("</div><!-- Main container ends here -->");
 pw.println("");
-pw.println("<form action='/styleone/employeesView' id='cancelEmployeeAdditionForm'>");
+pw.println("<form action='/styleone/employeesView' id='cancelEmployeeUpdationForm'>");
 pw.println("</form>");
 pw.println("</body>");
 pw.println("</html>");
