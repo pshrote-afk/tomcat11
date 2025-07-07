@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<title>HR Application</title>
+<script>
+function Employee() //this is a class in JavaScript
+{
+this.employeeId="";
+this.name="";
+this.designationCode=0;
+this.designation="";
+this.dateOfBirth="";
+this.gender="";
+this.isIndian=true;
+this.basicSalary="";
+this.panNumber="";
+this.aadharCardNumber="";
+}
+var selectedRow=null;
+var employees=[];
+var employee=new Employee();
+employee.employeeId="A100001";
+employee.name="Ramesh Gupta";
+employee.designationCode=1;
+employee.designation="Clerk";
+employee.dateOfBirth="01/12/2004";
+employee.gender="Male";
+employee.isIndian=true;
+employee.basicSalary=500;
+employee.panNumber="PAN123456789012345";
+employee.aadharCardNumber="UID12345";
+employees[0]=employee;
+
+employee=new Employee();
+employee.employeeId="A100002";
+employee.name="Mahesh Sharma";
+employee.designationCode=2;
+employee.designation="Liftman";
+employee.dateOfBirth="27/06/2004";
+employee.gender="Male";
+employee.isIndian=false;
+employee.basicSalary=200;
+employee.panNumber="PAN543216789012345";
+employee.aadharCardNumber="UID54321";
+employees[1]=employee;
+
+
+function selectEmployee(row,employeeId)
+{
+if(row==selectedRow) return;
+if(selectedRow==null)
+{
+row.style.color='white';
+row.style.background='gray';
+}
+else
+{
+selectedRow.style.color='black';
+selectedRow.style.background='white';
+row.style.color='white';
+row.style.background='gray';
+}
+selectedRow = row;
+var i;
+for(i=0;i<employees.length;i++)
+{
+if(employees[i].employeeId==employeeId)
+{
+break;
+}
+}
+var emp=employees[i];
+document.getElementById('detailPanel_employeeId').innerHTML=emp.employeeId;
+document.getElementById('detailPanel_name').innerHTML=emp.name;
+document.getElementById('detailPanel_designation').innerHTML=emp.designation;
+document.getElementById('detailPanel_dateOfBirth').innerHTML=emp.dateOfBirth;
+document.getElementById('detailPanel_gender').innerHTML=emp.gender;
+document.getElementById('detailPanel_isIndian').innerHTML=emp.isIndian;
+document.getElementById('detailPanel_basicSalary').innerHTML=emp.basicSalary;
+document.getElementById('detailPanel_panNumber').innerHTML=emp.panNumber;
+document.getElementById('detailPanel_aadharCardNumber').innerHTML=emp.aadharCardNumber;
+
+}
+</script>
+</head>
+<body>
+<!-- Main container starts here -->
+<div style='width:90hw;height:auto;border:1px solid black'>
+<!-- Header container starts here -->
+<div style='margin:5px;width:90hw;height:auto;border:1px solid black'>
+<a href='/styleone/index.html'><img src='/styleone/images/logo.png' style='float:left;width:35px;height:auto;padding:5px'></a><div style='margin-top:9px;margin-bottom:9px;font-size:20pt'>Thinking Machines</div>
+</div><!-- Header container ends here -->
+<!-- content-section starts here -->
+<div style='width:90hw;height:70vh;margin:5px;border:1px solid white'>
+<!-- left panel starts here -->
+<div style='height:65vh;margin:5px;float:left;padding:5px;border:1px solid black'>
+<a href='/styleone/designationsView'>Designations</a><br>
+Employees<br><br>
+<a href='/styleone/index.html'>Home</a>
+</div><!-- left panel ends here -->
+<!-- right panel starts here -->
+<div style='height:65vh;margin-left:105px;margin-right:5px;margin-bottom:5px;margin-top:5px;padding:5px;border:1px solid black'>
+<div style='height:35vh;margin-left:5px;margin-right:5px;margin-bottom:5px;margin-top:5px;padding:5px;border:1px solid black;overflow:auto'> <!-- Employees div starts here -->
+<b>Employees</b>
+<table border='5' style="width:100%">
+<thead>
+<tr>
+<th colspan='6' style='text-align:right;padding: 5px'>
+<a href='/styleone/addEmployee'>Add Employee</a> <!--doubt: Link to where-->
+</th>
+</tr>
+<tr>
+<th style='width:10%;text-align:center'>S.No.</th>
+<th style='width:10%;text-align:center'>Id</th>
+<th style='width:35%;text-align:center'>Name</th>
+<th style='width:25%;text-align:center'>Designation</th>
+<th style='width:10%;text-align:center'>Edit</th>
+<th style='width:10%;text-align:center'>Delete</th>
+</tr>
+</thead>
+<tbody>
+<!-- Java loop section would generate rows here -->
+<tr style='cursor:pointer' onclick='selectEmployee(this,"A100001")'>
+<td style='text-align:right'>1.</td>
+<td>A100001</td>
+<td>Ramesh Gupta</td>
+<td>Clerk</td>
+<td style='text-align:center'><a href='/styleone/editEmployee?employeeId=A100001'>Edit</a></td> <!--doubt: code=A100001? or id=A100001 -->
+<td style='text-align:center'><a href='/styleone/confirmDeleteEmployee?employeeId=A100001'>Delete</a></td>
+</tr>
+<tr style='cursor:pointer' onclick='selectEmployee(this,"A100002")'>
+<td style='text-align:right'>2.</td>
+<td>A100002</td>
+<td>Mahesh Sharma</td>
+<td>Liftman</td>
+<td style='text-align:center'><a href='/styleone/editEmployee?employeeId=A100002'>Edit</a></td> <!--doubt: code=A100002? or id=A100002 -->
+<td style='text-align:center'><a href='/styleone/confirmDeleteEmployee?employeeId=A100002'>Delete</a></td> 
+</tr>
+</tbody>
+</table>
+</div> <!-- Employees div ends here -->
+<div style='height:24vh;margin-left:5px;margin-right:5px;margin-bottom:5px;margin-top:5px;padding:5px;border:1px solid black'> <!-- Employee details div starts here -->
+<label style='background:gray;color:white;padding-left:5px;padding-right:5px;'>Details</label><br><br>
+<table border='1' style='width:99%;'>
+<tr>
+<td style='width:33%'>Employee Id: <span id='detailPanel_employeeId'></span></td>
+<td style='width:33%'>Name: <span id='detailPanel_name'></span></td>
+<td style='width:33%'>Designation: <span id='detailPanel_designation'></span></td>
+</tr>
+<tr>
+<td>Date of Birth: <span id='detailPanel_dateOfBirth'></span></td>
+<td>Gender: <span id='detailPanel_gender'></span></td>
+<td>Is Indian: <span id='detailPanel_isIndian'></span></td>
+</tr>
+<tr>
+<td>Basic Salary: <span id='detailPanel_basicSalary'></span></td>
+<td>PAN number: <span id='detailPanel_panNumber'></span></td>
+<td>Aadhar Card Number: <span id='detailPanel_aadharCardNumber'></span></td>
+</tr>
+</table>
+
+
+
+</div> <!-- Employee details div ends here -->
+</div><!-- right panel ends here -->
+</div><!-- content-section ends here -->
+<!-- footer starts here -->
+<div style='width:90hw;height:auto;margin:5px;text-align:center;border:1px solid footer'>
+&copy; Thinking Machines 2025
+</div> <!-- footer ends here -->
+</div><!-- Main container ends here -->
+</body>
+</html>
