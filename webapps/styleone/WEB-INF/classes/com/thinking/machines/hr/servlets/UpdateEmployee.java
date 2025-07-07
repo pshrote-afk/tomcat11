@@ -2,45 +2,48 @@ package com.thinking.machines.hr.servlets;
 import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-import java.io.*;
-import java.util.*;
 import java.text.*;
+import java.io.*;
 import java.math.*;
-public class EditEmployee extends HttpServlet
+import java.util.*;
+public class UpdateEmployee extends HttpServlet
 {
 public void doGet(HttpServletRequest request,HttpServletResponse response)
 {
 doPost(request,response);
 }
-public void doPost(HttpServletRequest request,HttpServletResponse response)
-{
-try
+public void doPost(HttpServletRequest request,HttpServletResponse response) 
 {
 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-String employeeId = request.getParameter("employeeId");
-// get other info by employeeId
-EmployeeDAO employeeDAO = new EmployeeDAO();
-EmployeeDTO employeeDTO;
-employeeDTO = employeeDAO.getByEmployeeId(employeeId);
-employeeId = employeeDTO.getEmployeeId();
-String name = employeeDTO.getName();
-int designationCode = employeeDTO.getDesignationCode();
-String title = employeeDTO.getTitle(); //not needed in this case
-java.util.Date dateOfBirth = employeeDTO.getDateOfBirth();
-String gender = employeeDTO.getGender();
-Boolean isIndian = employeeDTO.getIsIndian();
-BigDecimal basicSalary = employeeDTO.getBasicSalary();
-String panNumber = employeeDTO.getPANNumber();
-String aadharCardNumber = employeeDTO.getAadharCardNumber();
-
-DesignationDAO designationDAO;
-designationDAO = new DesignationDAO();
-List<DesignationDTO> designations;
-designations = designationDAO.getAll();
-
-PrintWriter pw = response.getWriter();
+try
+{
 response.setContentType("text/html");
+PrintWriter pw = response.getWriter();
 
+String employeeId = request.getParameter("employeeId");
+String name = request.getParameter("name");
+int designationCode = Integer.parseInt(request.getParameter("designationCode"));
+java.util.Date dateOfBirth = simpleDateFormat.parse(request.getParameter("dateOfBirth"));
+String gender = request.getParameter("gender");
+String isIndian = request.getParameter("isIndian");
+if(isIndian==null) isIndian="N";	//if null, means unchecked
+BigDecimal basicSalary = new BigDecimal(request.getParameter("basicSalary"));
+String panNumber = request.getParameter("panNumber");
+String aadharCardNumber = request.getParameter("aadharCardNumber");
+
+//validate 1. designation code 2. pan 3. aadhar
+EmployeeDAO employeeDAO = new EmployeeDAO();
+boolean designationCodeExists = employeeDAO.designationCodeExists(designationCode);
+boolean panNumberExists = employeeDAO.panNumberExists(panNumber);
+boolean aadharCardNumberExists = employeeDAO.aadharCardNumberExists(aadharCardNumber);
+
+EmployeeDTO tempEmployeeDTO = new EmployeeDTO();
+tempEmployeeDTO = employeeDAO.getByEmployeeId(employeeId);
+String oldPANNumber = tempEmployeeDTO.getPANNumber();
+String oldAadharCardNumber = tempEmployeeDTO.getAadharCardNumber();
+// enter if block if any of above three are problematic - send back form with filled data, and error messages
+if(designationCodeExists==false || (panNumberExists==true && !(panNumber.equalsIgnoreCase(oldPANNumber))) || (aadharCardNumberExists==true && !(aadharCardNumber.equalsIgnoreCase(oldAadharCardNumber))))
+{
 pw.println("<!DOCTYPE HTML>");
 pw.println("<html lang = 'en'>");
 pw.println("<head>");
@@ -175,7 +178,7 @@ pw.println("<table>");
 pw.println("<tr>");
 pw.println("<td>Name</td>");
 pw.println("<td>");
-pw.println("<input type='text' id='name' name='name' maxlength='35' size='36' value='"+name+"'> ");
+pw.println("<input type='text' id='name' name='name' maxlength='35' size='36' value='"+name+"'>");
 pw.println("<span id='nameErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
@@ -185,6 +188,9 @@ pw.println("<td>");
 
 pw.println("<select id='designationCode' name='designationCode'>");
 pw.println("<option value='-1'>&lt;Select Designation&gt;</option>");
+
+DesignationDAO designationDAO = new DesignationDAO();
+List<DesignationDTO> designations = designationDAO.getAll();
 int code;
 for(DesignationDTO designationDTO:designations)
 {
@@ -193,43 +199,36 @@ if(code==designationCode) pw.println("<option selected value='"+code+"'>"+design
 else pw.println("<option value='"+code+"'>"+designationDTO.getTitle()+"</option>");
 }
 pw.println("</select>");
-pw.println("<span id='designationCodeErrorSection' style='color:red'></span>");
+if(designationCodeExists==true) pw.println("<span id='designationCodeErrorSection' style='color:red'></span>");
+else pw.println("<span id='designationCodeErrorSection' style='color:red'>Designation does not exist.</span>");
+
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Date of birth</td>");
 pw.println("<td>");
-String dateOfBirthString = simpleDateFormat.format(dateOfBirth); 
-pw.println("<input type='date' id='dateOfBirth' name='dateOfBirth' value='"+dateOfBirthString+"'>");
+//done done
+pw.println("<input type='date' id='dateOfBirth' name='dateOfBirth' value='"+simpleDateFormat.format(dateOfBirth)+"'>");
 pw.println("<span id='dateOfBirthErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
+
 pw.println("<tr>");
 pw.println("<td>Gender</td>");
-if(gender.equals("M"))
-{
-pw.println("<td><input checked type='radio' id='male' name='gender' value='M'>Male");
-}
-else
-{
-pw.println("<td><input type='radio' id='male' name='gender' value='M'>Male");
-}
+if(gender.equals("M")) pw.println("<td><input checked type='radio' id='male' name='gender' value='M'>Male");
+else pw.println("<td><input checked type='radio' id='male' name='gender' value='M'>Male");
 pw.println("&nbsp;&nbsp;&nbsp;&nbsp;");
-if(gender.equals("F"))
-{
-pw.println("<input checked type='radio' id='female' name='gender' value='F'>Female");
-}
-else
-{
-pw.println("<input type='radio' id='female' name='gender' value='F'>Female");
-}
+if(gender.equals("F")) pw.println("<input checked type='radio' id='female' name='gender' value='F'>Female");
+else pw.println("<input type='radio' id='female' name='gender' value='F'>Female");
+
 pw.println("<span id='genderErrorSection' style='color:red'></span>");
 pw.println("</td>");
 pw.println("</tr>");
+
 pw.println("<tr>");
 pw.println("<td>Indian?</td>");
 pw.println("<td>");
-if(isIndian) pw.println("<input checked type='checkbox' id='isIndian' name='isIndian' value='Y'>");
+if(isIndian.equals("Y")) pw.println("<input checked type='checkbox' id='isIndian' name='isIndian' value='Y'>");
 else pw.println("<input type='checkbox' id='isIndian' name='isIndian' value='Y'>");
 pw.println("<span id='isIndianErrorSection' style='color:red'></span>");
 pw.println("</td>");
@@ -245,14 +244,21 @@ pw.println("<tr>");
 pw.println("<td>PAN number</td>");
 pw.println("<td>");
 pw.println("<input type='text' id='panNumber' name='panNumber' maxlength='15' size='16' value='"+panNumber+"'>");
-pw.println("<span id='panNumberErrorSection' style='color:red'></span>");
+
+if(panNumberExists==true && !(panNumber.equalsIgnoreCase(oldPANNumber))) pw.println("<span id='panNumberErrorSection' style='color:red'>PAN number already exists</span>");
+
+else pw.println("<span id='panNumberErrorSection' style='color:red'></span>");
+
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("<tr>");
 pw.println("<td>Aadhar Card Number</td>");
 pw.println("<td>");
 pw.println("<input type='text' id='aadharCardNumber' name='aadharCardNumber' maxlength='15' size='16' value='"+aadharCardNumber+"'>");
-pw.println("<span id='aadharCardNumberErrorSection' style='color:red'></span>");
+
+if(aadharCardNumberExists==true && !(aadharCardNumber.equalsIgnoreCase(oldAadharCardNumber))) pw.println("<span id='aadharCardNumberErrorSection' style='color:red'>Aadhar card number exists</span>");
+else pw.println("<span id='aadharCardNumberErrorSection' style='color:red'></span>");
+
 pw.println("</td>");
 pw.println("</tr>");
 pw.println("</table>");
@@ -285,13 +291,71 @@ pw.println("</form>");
 pw.println("</body>");
 pw.println("</html>");
 
+return;
+}
+
+EmployeeDTO employeeDTO = new EmployeeDTO();
+employeeDTO.setEmployeeId(employeeId);
+employeeDTO.setName(name);
+employeeDTO.setDesignationCode(designationCode);
+employeeDTO.setDateOfBirth(dateOfBirth);
+employeeDTO.setGender(gender);
+employeeDTO.setIsIndian(isIndian.equals("Y"));
+employeeDTO.setBasicSalary(basicSalary);
+employeeDTO.setPANNumber(panNumber);
+employeeDTO.setAadharCardNumber(aadharCardNumber);
+
+employeeDAO = new EmployeeDAO();
+employeeDAO.update(employeeDTO);
+pw.println("<!DOCTYPE HTML>");
+pw.println("<html lang = 'en'>");
+pw.println("<head>");
+pw.println("<title>HR Application</title>");
+pw.println("</head>");
+pw.println("<body>");
+pw.println("<!-- Main container starts here -->");
+pw.println("<div style='width:90hw;height:auto;border:1px solid black'>");
+pw.println("<!-- Header container starts here -->");
+pw.println("<div style='margin:5px;width:90hw;height:auto;border:1px solid black'>");
+pw.println("<img src='/styleone/images/logo.png' style='float:left;width:35px;height:auto;padding:5px'><div style='margin-top:9px;margin-bottom:9px;font-size:20pt'>Thinking Machines</div>");
+pw.println("</div><!-- Header container ends here -->");
+pw.println("<!-- content-section starts here -->");
+pw.println("<div style='width:90hw;height:70vh;margin:5px;border:1px solid white'>");
+pw.println("<!-- left panel starts here -->");
+pw.println("<div style='height:65vh;margin:5px;float:left;padding:5px;border:1px solid black'>");
+pw.println("<a href='/styleone/designationsView'>Designations</a><br>");
+pw.println("<a href='/styleone/employeesView'>Employees</a>");
+pw.println("</div><!-- left panel ends here -->");
+pw.println("<!-- right panel starts here -->");
+pw.println("<div style='height:65vh;margin-left:105px;margin-right:5px;margin-bottom:5px;margin-top:5px;padding:5px;border:1px solid black'>");
+pw.println("<h3>Notification</h3>");
+pw.println("Employee updated with employee id: "+employeeDTO.getEmployeeId()+"<br><br>");
+pw.println("<form action='/styleone/employeesView'>"); 
+pw.println("<button type='submit'>OK</button>");
+pw.println("</form>");
+pw.println("</div><!-- right panel ends here -->");
+pw.println("</div><!-- content-section ends here -->");
+pw.println("<!-- footer starts here -->");
+pw.println("<div style='width:90hw;height:auto;margin:5px;text-align:center;border:1px solid footer'>");
+pw.println("&copy; Thinking Machines 2025");
+pw.println("</div> <!-- footer ends here -->");
+pw.println("</div><!-- Main container ends here -->");
+pw.println("</body>");
+pw.println("</html>");
+
+
 }catch(DAOException daoException)
 {
-System.out.println(daoException.getMessage()); //remove after testing and setup 500 (internal page error)
+System.out.println(daoException.getMessage());
+
+// collect all errors. And return to top of page
+//return form with all values intact
 }
 catch(Exception exception)
 {
-System.out.println(exception.getMessage()); //remove after testing and setup 500 (internal page error)
+System.out.println(exception.getMessage());
 }
+
+
 }
 }

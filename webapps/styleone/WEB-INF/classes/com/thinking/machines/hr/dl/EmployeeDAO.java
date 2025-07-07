@@ -5,6 +5,71 @@ import java.math.*;
 import java.text.*;
 public class EmployeeDAO
 {
+public void update(EmployeeDTO employeeDTO) throws DAOException
+{
+String employeeIdString = employeeDTO.getEmployeeId();
+if(employeeIdString.charAt(0) == 'A') employeeIdString = employeeIdString.substring(1);
+int employeeId = Integer.parseInt(employeeIdString);
+String panNumber = employeeDTO.getPANNumber();
+String aadharCardNumber = employeeDTO.getAadharCardNumber();
+try
+{
+Connection connection = DAOConnection.getConnection();
+PreparedStatement prepareStatement = connection.prepareStatement("SELECT id FROM employee WHERE pan_number=? AND id!=?");
+prepareStatement.setString(1,panNumber);
+prepareStatement.setInt(2,employeeId);
+ResultSet resultSet = prepareStatement.executeQuery();
+if(resultSet.next())
+{
+resultSet.close();
+prepareStatement.close();
+connection.close();
+throw new DAOException("PAN number: "+panNumber+" already exists.");
+}
+resultSet.close();
+prepareStatement.close();
+prepareStatement = connection.prepareStatement("SELECT id FROM employee WHERE aadhar_card_number=? AND id!=?");
+prepareStatement.setString(1,aadharCardNumber);
+prepareStatement.setInt(2,employeeId);
+resultSet = prepareStatement.executeQuery();
+if(resultSet.next())
+{
+resultSet.close();
+prepareStatement.close();
+connection.close();
+throw new DAOException("Aadhar card number: "+aadharCardNumber+" already exists.");
+}
+resultSet.close();
+prepareStatement.close();
+String name = employeeDTO.getName();
+int designationCode = employeeDTO.getDesignationCode();
+java.util.Date dateOfBirth = employeeDTO.getDateOfBirth();
+String gender = employeeDTO.getGender();
+boolean isIndian = employeeDTO.getIsIndian();
+BigDecimal basicSalary = employeeDTO.getBasicSalary();
+
+prepareStatement = connection.prepareStatement("UPDATE employee SET name=?,designation_code=?,date_of_birth=?,gender=?,is_indian=?,basic_salary=?,pan_number=?,aadhar_card_number=? WHERE id=?");
+prepareStatement.setString(1,name);
+prepareStatement.setInt(2,designationCode);
+SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+java.sql.Date sqlDateOfBirth = new java.sql.Date(dateOfBirth.getTime());
+prepareStatement.setDate(3,sqlDateOfBirth); 
+prepareStatement.setString(4,gender);
+prepareStatement.setBoolean(5,isIndian);
+prepareStatement.setBigDecimal(6,basicSalary);
+prepareStatement.setString(7,panNumber);
+prepareStatement.setString(8,aadharCardNumber);
+prepareStatement.setInt(9,employeeId);
+
+prepareStatement.executeUpdate();
+prepareStatement.close();
+connection.close();
+}catch(Exception exception)
+{
+throw new DAOException(exception.getMessage());
+}
+}
+
 public EmployeeDTO getByEmployeeId(String employeeId) throws DAOException
 {
 if(employeeId.charAt(0) == 'A') employeeId = employeeId.substring(1); //to convert A100001 to 100001

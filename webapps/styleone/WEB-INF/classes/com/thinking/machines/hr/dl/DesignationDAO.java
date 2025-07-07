@@ -55,34 +55,34 @@ String title = designationDTO.getTitle();
 try
 {
 Connection connection = DAOConnection.getConnection();
-PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM designation WHERE code=?");
-preparedStatement.setInt(1,code);
-ResultSet resultSet = preparedStatement.executeQuery();
+PreparedStatement prepareStatement = connection.prepareStatement("SELECT * FROM designation WHERE code=?");
+prepareStatement.setInt(1,code);
+ResultSet resultSet = prepareStatement.executeQuery();
 if(resultSet.next()==false)
 {
 connection.close();
-preparedStatement.close();
+prepareStatement.close();
 resultSet.close();
 throw new DAOException("Invalid designation code: "+code);
 }
-preparedStatement = connection.prepareStatement("SELECT * FROM designation WHERE title=? AND CODE!=?");
-preparedStatement.setString(1,title);
-preparedStatement.setInt(2,code);
-resultSet = preparedStatement.executeQuery();
+prepareStatement = connection.prepareStatement("SELECT * FROM designation WHERE title=? AND CODE!=?");
+prepareStatement.setString(1,title);
+prepareStatement.setInt(2,code);
+resultSet = prepareStatement.executeQuery();
 if(resultSet.next()==true)
 {
 connection.close();
-preparedStatement.close();
+prepareStatement.close();
 resultSet.close();
 throw new DAOException("Designation already exists: "+title);
 }
 resultSet.close();
-preparedStatement.close();
-preparedStatement = connection.prepareStatement("UPDATE designation SET title=? WHERE code=?");
-preparedStatement.setString(1,title);
-preparedStatement.setInt(2,code);
-preparedStatement.executeUpdate();
-preparedStatement.close();
+prepareStatement.close();
+prepareStatement = connection.prepareStatement("UPDATE designation SET title=? WHERE code=?");
+prepareStatement.setString(1,title);
+prepareStatement.setInt(2,code);
+prepareStatement.executeUpdate();
+prepareStatement.close();
 connection.close();
 }catch(Exception exception)
 {
@@ -95,14 +95,14 @@ public DesignationDTO getByCode(int code) throws DAOException
 try
 {
 Connection connection = DAOConnection.getConnection();
-PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM designation WHERE CODE=?");
-preparedStatement.setInt(1,code);
+PreparedStatement prepareStatement = connection.prepareStatement("SELECT * FROM designation WHERE CODE=?");
+prepareStatement.setInt(1,code);
 ResultSet resultSet;
-resultSet = preparedStatement.executeQuery();
+resultSet = prepareStatement.executeQuery();
 if(resultSet.next()==false)
 {
 resultSet.close();
-preparedStatement.close();
+prepareStatement.close();
 connection.close();
 throw new DAOException("Invalid designation code: "+code);
 }
@@ -110,7 +110,7 @@ DesignationDTO designationDTO = new DesignationDTO();
 designationDTO.setCode(resultSet.getInt("code"));
 designationDTO.setTitle(resultSet.getString("title").trim());
 resultSet.close();
-preparedStatement.close();
+prepareStatement.close();
 connection.close();
 return designationDTO;
 }catch(Exception exception)
@@ -124,26 +124,26 @@ public void add(DesignationDTO designationDTO) throws DAOException
 try
 {
 Connection connection = DAOConnection.getConnection();
-PreparedStatement preparedStatement;
-preparedStatement = connection.prepareStatement("SELECT * FROM designation WHERE title=?");
-preparedStatement.setString(1,designationDTO.getTitle());
-ResultSet resultSet = preparedStatement.executeQuery();
+PreparedStatement prepareStatement;
+prepareStatement = connection.prepareStatement("SELECT * FROM designation WHERE title=?");
+prepareStatement.setString(1,designationDTO.getTitle());
+ResultSet resultSet = prepareStatement.executeQuery();
 if(resultSet.next()==true) //means some entry with above title already exists. Raise exception
 {
 resultSet.close();
-preparedStatement.close();
+prepareStatement.close();
 connection.close();
 throw new DAOException("Designation: "+designationDTO.getTitle()+" already exists.");
 }
-preparedStatement = connection.prepareStatement("INSERT INTO designation (title) values (?)", Statement.RETURN_GENERATED_KEYS);
-preparedStatement.setString(1,designationDTO.getTitle());
-preparedStatement.executeUpdate();
+prepareStatement = connection.prepareStatement("INSERT INTO designation (title) values (?)", Statement.RETURN_GENERATED_KEYS);
+prepareStatement.setString(1,designationDTO.getTitle());
+prepareStatement.executeUpdate();
 
-resultSet = preparedStatement.getGeneratedKeys();
+resultSet = prepareStatement.getGeneratedKeys();
 resultSet.next();
 int code = resultSet.getInt(1);
 resultSet.close();
-preparedStatement.close();
+prepareStatement.close();
 connection.close();
 designationDTO.setCode(code);
 }catch(SQLException sqlException)
