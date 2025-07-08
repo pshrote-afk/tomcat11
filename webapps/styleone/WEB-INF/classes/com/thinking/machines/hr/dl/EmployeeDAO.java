@@ -5,6 +5,40 @@ import java.math.*;
 import java.text.*;
 public class EmployeeDAO
 {
+public EmployeeDTO deleteByEmployeeId(String employeeId) throws DAOException //returns name of employee deleted in DTO
+{
+if(employeeId.charAt(0) == 'A') employeeId = employeeId.substring(1);
+int actualEmployeeId = Integer.parseInt(employeeId);
+try
+{
+Connection connection = DAOConnection.getConnection();
+PreparedStatement prepareStatement = connection.prepareStatement("SELECT name FROM employee WHERE id=?");
+prepareStatement.setInt(1,actualEmployeeId);
+ResultSet resultSet = prepareStatement.executeQuery();
+if(resultSet.next()==false)
+{
+resultSet.close();
+prepareStatement.close();
+connection.close();
+throw new DAOException("Invalid employee Id: "+employeeId);
+}
+String name = resultSet.getString("name");
+resultSet.close();
+prepareStatement.close();
+prepareStatement = connection.prepareStatement("DELETE FROM employee WHERE id=?");
+prepareStatement.setInt(1,actualEmployeeId);
+prepareStatement.executeUpdate();
+prepareStatement.close();
+connection.close();
+EmployeeDTO employeeDTO = new EmployeeDTO();
+employeeDTO.setName(name);
+return employeeDTO;
+}catch(Exception exception)
+{
+throw new DAOException(exception.getMessage());
+}
+}
+
 public void update(EmployeeDTO employeeDTO) throws DAOException
 {
 String employeeIdString = employeeDTO.getEmployeeId();

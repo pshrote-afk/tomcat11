@@ -126,6 +126,25 @@
 <servlet-name>UpdateEmployee</servlet-name>
 <url-pattern>/updateEmployee</url-pattern>
 </servlet-mapping>
+
+<servlet>
+<servlet-name>ConfirmDeleteEmployee</servlet-name>
+<servlet-class>com.thinking.machines.hr.servlets.ConfirmDeleteEmployee</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>ConfirmDeleteEmployee</servlet-name>
+<url-pattern>/confirmDeleteEmployee</url-pattern>
+</servlet-mapping>
+
+<servlet>
+<servlet-name>DeleteEmployee</servlet-name>
+<servlet-class>com.thinking.machines.hr.servlets.DeleteEmployee</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>DeleteEmployee</servlet-name>
+<url-pattern>/deleteEmployee</url-pattern>
+</servlet-mapping>
+
 </web-app>
 
 
