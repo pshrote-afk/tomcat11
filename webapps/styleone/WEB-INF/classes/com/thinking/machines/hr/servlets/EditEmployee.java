@@ -287,12 +287,10 @@ pw.println("</html>");
 
 }catch(DAOException daoException)
 {
-System.out.println(daoException.getMessage()); //remove after testing and setup 500 (internal page error)
 sendBackView(response);
 }
 catch(Exception exception)
 {
-System.out.println(exception.getMessage()); //remove after testing and setup 500 (internal page error)
 sendBackView(response);
 }
 }
