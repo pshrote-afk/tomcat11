@@ -3,36 +3,37 @@
 <html lang = 'en'>
 <head>
 <title>HR Application</title>
+<link rel='stylesheet' text='html/css' href='/styletwo/css/styles.css'></link>
 </head>
 <body>
 <!-- Main container starts here -->
-<div style='width:90hw;height:auto;border:1px solid black'>
+<div class='main-container'>
 <!-- Header container starts here -->
-<div style='margin:5px;width:90hw;height:auto;border:1px solid black'>
-<a href='/styletwo/index.html'><img src='/styletwo/images/logo.png' style='float:left;width:35px;height:auto;padding:5px'></a><div style='margin-top:9px;margin-bottom:9px;font-size:20pt'>Thinking Machines</div>
+<div class='header-container'>
+<a href='/styletwo/index.html'><img src='/styletwo/images/logo.png' class='logo'></a><div class='brand-name'>Thinking Machines</div>
 </div><!-- Header container ends here -->
 <!-- content-section starts here -->
-<div style='width:90hw;height:70vh;margin:5px;border:1px solid white'>
+<div class='content'>
 <!-- left panel starts here -->
-<div style='height:65vh;margin:5px;float:left;padding:5px;border:1px solid black'>
+<div class='content-left-panel'>
 Designations<br>
 <a href='/styletwo/Employees.jsp'>Employees</a><br><br>
 <a href='/styletwo/index.html'>Home</a>
 </div><!-- left panel ends here -->
 <!-- right panel starts here -->
-<div style='height:65vh;margin-left:105px;margin-right:5px;margin-bottom:5px;margin-top:5px;padding:5px;border:1px solid black;overflow:auto'>
-<table border='5'>
+<div class='content-right-panel'>
+<table class='designation-view-table'>
 <thead>
 <tr>
-<th colspan='4' style='text-align:right;padding: 5px'>
+<th class='add-new-designation-header' colspan='4'>
 <a href='/styletwo/DesignationAddForm.jsp'>Add new designation</a>
 </th>
 </tr>
 <tr>
-<th style='width:60px;text-align:center'>S.No.</th>
-<th style='width:200px;text-align:center'>Designation</th>
-<th style='width:80px;text-align:center'>Edit</th>
-<th style='width:80px;text-align:center'>Delete</th>
+<th class='s-no'>S.No.</th>
+<th class='designation'>Designation</th>
+<th class='edit'>Edit</th>
+<th class='delete'>Delete</th>
 </tr>
 </thead>
 <tbody>
@@ -52,7 +53,7 @@ Designations<br>
 </div><!-- right panel ends here -->
 </div><!-- content-section ends here -->
 <!-- footer starts here -->
-<div style='width:90hw;height:auto;margin:5px;text-align:center;border:1px solid footer'>
+<div class='footer'>
 &copy; Thinking Machines 2025
 </div> <!-- footer ends here -->
 </div><!-- Main container ends here -->
