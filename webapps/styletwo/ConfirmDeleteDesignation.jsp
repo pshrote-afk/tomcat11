@@ -1,28 +1,7 @@
 <jsp:useBean id='designationBean' scope='request' class='com.thinking.machines.hr.beans.DesignationBean' />
 <jsp:useBean id='errorBean' scope='request' class='com.thinking.machines.hr.beans.ErrorBean' />
-<!DOCTYPE HTML>
-<html lang = 'en'>
-<head>
-<title>HR Application</title>
+<jsp:include page='/MasterPageTopSection.jsp' />
 <script src='/styletwo/js/ConfirmDeleteDesignation.js'></script>
-<link rel='stylesheet' type='text/css' href='/styletwo/css/styles.css'></link>
-</head>
-<body>
-<!-- Main container starts here -->
-<div class='main-container'>
-<!-- Header container starts here -->
-<div class='header-container'>
-<img src='/styletwo/images/logo.png' class='logo'><div class='brand-name'>Thinking Machines</div>
-</div><!-- Header container ends here -->
-<!-- content-section starts here -->
-<div class='content'>
-<!-- left panel starts here -->
-<div class='content-left-panel'>
-<b>Designations</b><br>
-<a href='/styletwo/Employees.jsp'>Employees</a>
-</div><!-- left panel ends here -->
-<!-- right panel starts here -->
-<div class='content-right-panel'>
 <h2>Designation (Delete Module)</h2>
 <br>
 <form method='post' action='/styletwo/DeleteDesignation.jsp' onsubmit='return validateForm(this)'>
@@ -48,14 +27,6 @@ Are you sure you want to delete?
 </td>
 </tr>
 </table>
-</div><!-- right panel ends here -->
-</div><!-- content-section ends here -->
-<!-- footer starts here -->
-<div class='footer'>
-&copy; Thinking Machines 2025
-</div> <!-- footer ends here -->
-</div> <!-- Main container ends here -->
-<form action='/styleone/Designations.jsp' id='cancelDeletionForm'>
+<form action='/styletwo/Designations.jsp' id='cancelDeletionForm'>
 </form>
-</body>
-</html>
+<jsp:include page='/MasterPageBottomSection.jsp' />

@@ -46,6 +46,7 @@ requestDispatcher.forward(request,response);		//may throw ServletException
 }
 }catch(Exception exception)
 {
+System.out.println(exception.getMessage()); //remove after testing
 RequestDispatcher requestDispatcher;
 requestDispatcher = request.getRequestDispatcher("ErrorPage.jsp");
 try
