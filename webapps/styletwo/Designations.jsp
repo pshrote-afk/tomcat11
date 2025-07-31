@@ -1,4 +1,5 @@
 <%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
+<tm:Set module='2'></tm:Set>
 <jsp:include page='/MasterPageTopSection.jsp' />
 
 <table class='designation-view-table'>

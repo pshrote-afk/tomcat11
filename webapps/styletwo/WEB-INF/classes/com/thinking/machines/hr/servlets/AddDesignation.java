@@ -7,6 +7,36 @@ public class AddDesignation extends HttpServlet
 {
 public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
+String formId = request.getParameter("formId");
+HttpSession httpSession = request.getSession();
+String sessionFormId = (String)httpSession.getAttribute("formId");
+if(formId.equalsIgnoreCase(sessionFormId)==false)
+{
+MessageBean messageBean = new MessageBean();
+messageBean.setHeading("Warning");
+messageBean.setMessage("Do not refresh page while submitting form");
+messageBean.setGenerateButtons(true);
+messageBean.setButtonOneText("OK");
+messageBean.setButtonOneAction("Designations.jsp");
+request.setAttribute("messageBean",messageBean);
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("Notification.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+}catch(Exception exception)
+{
+// if user hits refresh - exception thrown: Cannot forward after response has been committed. Hence no need to "return;"
+//return; // no need. Since request is forwarded, and forwarded .jsp sends s response. 
+}
+
+}
+else
+{
+//else it is the same form - remove formId from session scope - and continue processing
+httpSession.removeAttribute("formId");
+}
+
 try
 {
 //extract data from bean

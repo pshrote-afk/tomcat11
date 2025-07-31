@@ -45,5 +45,35 @@
 	<description>To setup all designations</description>
 </tag>
 
+<tag>
+	<name>Set</name>
+	<tag-class>com.thinking.machines.hr.tags.SetTagHandler</tag-class>
+	<attribute>
+		<name>module</name>
+		<required>false</required>
+		<rtexprvalue>false</rtexprvalue>
+	</attribute>
+	<attribute>
+		<name>HOME</name>
+		<required>false</required>
+		<rtexprvalue>false</rtexprvalue>
+	</attribute>
+	<attribute>
+		<name>DESIGNATION</name>
+		<required>false</required>
+		<rtexprvalue>false</rtexprvalue>
+	</attribute>
+	<attribute>
+		<name>EMPLOYEE</name>
+		<required>false</required>
+		<rtexprvalue>false</rtexprvalue>
+	</attribute>
+</tag>
+
+<tag>
+	<name>FormId</name>
+	<tag-class>com.thinking.machines.hr.tags.FormIdTagHandler</tag-class>
+	<description>To generate UUID for add form on server side, and put it in HttpSession object</description>
+</tag>
 
 </taglib>

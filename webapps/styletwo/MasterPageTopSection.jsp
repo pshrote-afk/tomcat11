@@ -1,3 +1,8 @@
+<%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
+<tm:Set HOME='1'></tm:Set>
+<tm:Set DESIGNATION='2'></tm:Set>
+<tm:Set EMPLOYEE='3'></tm:Set>
+
 <!DOCTYPE HTML>
 <html lang = 'en'>
 <head>
@@ -13,9 +18,28 @@
 </div><!-- Header container ends here -->
 <!-- content-section starts here -->
 <div class='content'>
+
 <!-- left panel starts here -->
 <div class='content-left-panel'>
+
+<tm:If condition='${module==DESIGNATION}'>
 <b>Designations</b><br>
-<a href='/styletwo/Employees.jsp'>Employees</a>
+</tm:If>
+<tm:If condition='${module!=DESIGNATION}'>
+<a href='/styletwo/Designations.jsp'>Designations</a><br>
+</tm:If>
+
+<tm:If condition='${module==EMPLOYEE}'>
+<b>Employees</b><br><br>
+</tm:If>
+<tm:If condition='${module!=EMPLOYEE}'>
+<a href='/styletwo/Employees.jsp'>Employees</a><br><br>
+</tm:If>
+
+<tm:If condition='${module!=HOME}'>
+<a href='/styletwo/index.jsp'>Home</a><br>
+</tm:If>
+
 </div><!-- left panel ends here -->
+
 <div class='content-right-panel'><!-- right panel starts here -->

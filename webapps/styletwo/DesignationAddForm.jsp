@@ -1,12 +1,16 @@
+<%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
 <jsp:useBean id='designationBean' scope='request' class='com.thinking.machines.hr.beans.DesignationBean'/>
 <jsp:useBean id='errorBean' scope='request' class='com.thinking.machines.hr.beans.ErrorBean'/>
 <jsp:include page='/MasterPageTopSection.jsp' />
+
+<tm:FormId></tm:FormId>
 
 <script src='/styletwo/js/DesignationAddForm.js'></script>
 <h2>Designation (Add Module)</h2>
 <br>
 <form method='post' action='/styletwo/AddDesignation.jsp' onsubmit='return validateForm(this)'>
 Designation
+<input type='hidden' id='formId' name='formId' value='${formId}'>
 <input type='text' id='title' name='title' maxlength='35' size='36' value='${designationBean.title}'>
 <span class='error' id='titleErrorSection'>
 <jsp:getProperty name='errorBean' property='error' />
