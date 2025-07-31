@@ -71,6 +71,17 @@
 </tag>
 
 <tag>
+	<name>Module</name>
+	<tag-class>com.thinking.machines.hr.tags.ModuleTagHandler</tag-class>
+	<description>To set module-based navigation panel hyperlinks</description>
+	<attribute>
+		<name>name</name>
+		<required>true</required>
+		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+</tag>
+
+<tag>
 	<name>FormId</name>
 	<tag-class>com.thinking.machines.hr.tags.FormIdTagHandler</tag-class>
 	<description>To generate UUID for add form on server side, and put it in HttpSession object</description>

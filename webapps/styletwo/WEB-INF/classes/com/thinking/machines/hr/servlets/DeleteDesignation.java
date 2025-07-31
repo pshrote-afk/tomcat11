@@ -41,9 +41,16 @@ System.out.println(exception.getMessage());
 
 }catch(DAOException daoException)
 {
-//means such a code doesn't exist
+MessageBean messageBean = new MessageBean();
+messageBean.setHeading("Designation (Delete Module)");
+messageBean.setMessage(daoException.getMessage());
+messageBean.setGenerateButtons(true);
+messageBean.setGenerateTwoButtons(false);
+messageBean.setButtonOneText("OK");
+messageBean.setButtonOneAction("Designations.jsp");
+request.setAttribute("messageBean",messageBean);
 RequestDispatcher requestDispatcher;
-requestDispatcher = request.getRequestDispatcher("Designations.jsp");
+requestDispatcher = request.getRequestDispatcher("Notification.jsp");
 try
 {
 requestDispatcher.forward(request,response);

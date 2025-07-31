@@ -1,7 +1,4 @@
 <%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
-<tm:Set HOME='1'></tm:Set>
-<tm:Set DESIGNATION='2'></tm:Set>
-<tm:Set EMPLOYEE='3'></tm:Set>
 
 <!DOCTYPE HTML>
 <html lang = 'en'>

@@ -1,3 +1,6 @@
+<%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
+<tm:Module name='DESIGNATION'></tm:Module>
+
 <jsp:useBean id='designationBean' scope='request' class='com.thinking.machines.hr.beans.DesignationBean' />
 <jsp:useBean id='errorBean' scope='request' class='com.thinking.machines.hr.beans.ErrorBean' />
 

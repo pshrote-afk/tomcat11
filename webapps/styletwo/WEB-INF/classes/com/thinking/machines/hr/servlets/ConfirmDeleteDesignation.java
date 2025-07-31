@@ -33,9 +33,6 @@ System.out.println(exception.getMessage());
 }
 
 
-
-
-
 }catch(DAOException daoException)
 {
 //means such a code doesn't exist
