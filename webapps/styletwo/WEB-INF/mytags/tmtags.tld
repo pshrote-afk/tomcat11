@@ -84,7 +84,12 @@
 <tag>
 	<name>FormId</name>
 	<tag-class>com.thinking.machines.hr.tags.FormIdTagHandler</tag-class>
-	<description>To generate UUID for add form on server side, and put it in HttpSession object</description>
+	<description>To generate UUID for add form on server side, put it in HttpSession object, and write it using JspWriter jw = pageContext.getOut() </description>
+</tag>
+<tag>
+	<name>FormResubmitted</name>
+	<tag-class>com.thinking.machines.hr.tags.FormResubmittedTagHandler</tag-class>
+	<description>To compare formId coming from form field, and formId in Session scope</description>
 </tag>
 
 </taglib>

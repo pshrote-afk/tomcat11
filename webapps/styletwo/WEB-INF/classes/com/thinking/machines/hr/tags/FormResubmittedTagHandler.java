@@ -5,9 +5,9 @@ import java.util.*;
 import jakarta.servlet.jsp.*;	//for JspWriter
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
-public class FormIdTagHandler extends TagSupport
+public class FormResubmittedTagHandler extends TagSupport
 {
-public FormIdTagHandler()
+public FormResubmittedTagHandler()
 {
 reset();
 }
@@ -18,21 +18,26 @@ private void reset()
 public int doStartTag()
 {
 HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
-HttpSession httpSession = request.getSession(true);
-String formId = UUID.randomUUID().toString();
-httpSession.setAttribute(formId,formId);
-JspWriter jw = pageContext.getOut();
-try
+String formId = request.getParameter("formId");
+if(formId==null)
 {
-jw.println("<input type='hidden' id='formId' name='formId' value='"+formId+"'>");
-}catch(IOException ioe)
-{
-//do nothing
+return super.EVAL_BODY_INCLUDE;
 }
+HttpSession httpSession = request.getSession();
+String formIdInSession = (String)httpSession.getAttribute(formId);
+httpSession.removeAttribute(formId);
+if(formId.equals(formIdInSession))
+{
 return super.SKIP_BODY;
+}
+else
+{
+return super.EVAL_BODY_INCLUDE;
+}
 }
 public int doEndTag()
 {
+reset();
 return super.EVAL_PAGE;
 }
 
