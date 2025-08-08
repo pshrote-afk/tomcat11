@@ -1,5 +1,5 @@
 <%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
-
+<tm:CheckAuthentication />
 <tm:FormResubmitted>
 <tm:Module name='HOME'/>
 <jsp:forward page='/notifyFormResubmission'/>

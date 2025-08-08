@@ -92,4 +92,10 @@
 	<description>To compare formId coming from form field, and formId in Session scope</description>
 </tag>
 
+<tag>
+	<name>CheckAuthentication</name>
+	<tag-class>com.thinking.machines.hr.tags.CheckAuthenticationTagHandler</tag-class>
+	<description>To restrict backdoor access</description>
+</tag>
+
 </taglib>

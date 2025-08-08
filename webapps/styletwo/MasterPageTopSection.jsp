@@ -1,5 +1,5 @@
 <%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
-
+<tm:CheckAuthentication />
 <!DOCTYPE HTML>
 <html lang = 'en'>
 <head>
@@ -12,6 +12,13 @@
 <!-- Header container starts here -->
 <div class='header-container'>
 <img src='/styletwo/images/logo.png' class='logo'><div class='brand-name'>Thinking Machines</div>
+<div class='user-panel'>
+<u>Username</u>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/styletwo/logout'>Logout</a><br>
+<img src='/styletwo/images/user-icon.png' class='user-icon'>
+${username}
+
+</div>
 </div><!-- Header container ends here -->
 <!-- content-section starts here -->
 <div class='content'>

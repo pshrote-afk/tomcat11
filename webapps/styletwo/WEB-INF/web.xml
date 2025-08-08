@@ -28,7 +28,7 @@
     <display-name>Style Two</display-name>
 
 <welcome-file-list>
-	<welcome-file>index.jsp</welcome-file>
+	<welcome-file>LoginForm.jsp</welcome-file>
 </welcome-file-list>
 
     <request-character-encoding>UTF-8</request-character-encoding>
@@ -85,6 +85,25 @@
 <servlet-mapping>
 <servlet-name>NotifyFormResubmission</servlet-name>
 <url-pattern>/notifyFormResubmission</url-pattern>
+</servlet-mapping>
+
+
+<servlet>
+<servlet-name>Login</servlet-name>
+<servlet-class>com.thinking.machines.hr.servlets.Login</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>Login</servlet-name>
+<url-pattern>/login</url-pattern>
+</servlet-mapping>
+
+<servlet>
+<servlet-name>Logout</servlet-name>
+<servlet-class>com.thinking.machines.hr.servlets.Logout</servlet-class>
+</servlet>
+<servlet-mapping>
+<servlet-name>Logout</servlet-name>
+<url-pattern>/logout</url-pattern>
 </servlet-mapping>
 
 </web-app>
