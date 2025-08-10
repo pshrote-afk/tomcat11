@@ -1,5 +1,4 @@
 <jsp:useBean id='errorBean' scope='request' class='com.thinking.machines.hr.beans.ErrorBean' />
-
 <!DOCTYPE HTML>
 <html lang = 'en'>
 <head>

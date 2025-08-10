@@ -5,8 +5,27 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 public class AddDesignation extends HttpServlet
 {
+public void doGet(HttpServletRequest request,HttpServletResponse response)
+{
+doPost(request,response);
+}
 public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
+//check Authentication
+HttpSession httpSession = request.getSession();
+if(httpSession.getAttribute("username")==null)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("/LoginForm.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+return;
+}catch(Exception exception)
+{
+//do nothing
+}
+}
 try
 {
 //extract data from bean

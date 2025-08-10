@@ -1,5 +1,7 @@
 <%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
-<tm:CheckAuthentication />
+<tm:Guard>
+<jsp:forward page='/LoginForm.jsp' />
+</tm:Guard>
 <!DOCTYPE HTML>
 <html lang = 'en'>
 <head>

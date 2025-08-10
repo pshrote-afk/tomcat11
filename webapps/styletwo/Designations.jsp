@@ -1,5 +1,4 @@
 <%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
-<tm:CheckAuthentication />
 <tm:Module name='DESIGNATION'></tm:Module>
 <jsp:include page='/MasterPageTopSection.jsp' />
 
@@ -19,14 +18,14 @@
 </thead>
 <tbody>
 
-<tm:Designations>
+<tm:EntityList populatorClass='com.thinking.machines.hr.bl.DesignationBL' populatorMethod='getAll' name='whatever'>
 <tr>
 <td style='text-align:right'>${serialNumber}</td>
-<td>${designationBean.title}</td>
-<td style='text-align:center'><a href='/styletwo/editDesignation?code=${designationBean.code}'>Edit</a></td>
-<td style='text-align:center'><a href='/styletwo/confirmDeleteDesignation?code=${designationBean.code}'>Delete</a></td>
+<td>${whatever.title}</td>
+<td style='text-align:center'><a href='/styletwo/editDesignation?code=${whatever.code}'>Edit</a></td>
+<td style='text-align:center'><a href='/styletwo/confirmDeleteDesignation?code=${whatever.code}'>Delete</a></td>
 </tr>
-</tm:Designations>
+</tm:EntityList>
 
 </tbody>
 </table>

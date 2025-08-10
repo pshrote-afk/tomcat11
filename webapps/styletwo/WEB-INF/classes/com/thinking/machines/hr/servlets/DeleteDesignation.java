@@ -13,6 +13,21 @@ doPost(request,response);
 }
 public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
+//check Authentication
+HttpSession httpSession = request.getSession();
+if(httpSession.getAttribute("username")==null)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("/LoginForm.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+return;
+}catch(Exception exception)
+{
+//do nothing
+}
+}
 DesignationDAO designationDAO = new DesignationDAO();
 //extract bean from request scope
 DesignationBean designationBean;

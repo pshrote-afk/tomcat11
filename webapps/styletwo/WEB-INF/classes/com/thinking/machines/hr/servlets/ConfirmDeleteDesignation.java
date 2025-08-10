@@ -13,6 +13,21 @@ doPost(request,response);
 }
 public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
+//check Authentication
+HttpSession httpSession = request.getSession();
+if(httpSession.getAttribute("username")==null)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("/LoginForm.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+return;
+}catch(Exception exception)
+{
+//do nothing
+}
+}
 int code=Integer.parseInt(request.getParameter("code"));
 DesignationDAO designationDAO = new DesignationDAO();
 try
@@ -31,8 +46,6 @@ requestDispatcher.forward(request,response);
 {
 System.out.println(exception.getMessage());
 }
-
-
 }catch(DAOException daoException)
 {
 //means such a code doesn't exist

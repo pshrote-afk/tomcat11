@@ -93,9 +93,34 @@
 </tag>
 
 <tag>
-	<name>CheckAuthentication</name>
-	<tag-class>com.thinking.machines.hr.tags.CheckAuthenticationTagHandler</tag-class>
+	<name>Guard</name>
+	<tag-class>com.thinking.machines.hr.tags.GuardTagHandler</tag-class>
 	<description>To restrict backdoor access</description>
 </tag>
+
+<tag>
+	<name>EntityList</name>
+	<tag-class>com.thinking.machines.hr.tags.EntityListTagHandler</tag-class>
+	<description>To get all entities in any given class</description>
+	<attribute>
+		<name>populatorClass</name>
+		<required>true</required>
+		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	<attribute>
+		<name>populatorMethod</name>
+		<required>true</required>
+		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	<attribute>
+		<name>name</name>
+		<required>true</required>
+		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+
+</tag>
+
+
+
 
 </taglib>

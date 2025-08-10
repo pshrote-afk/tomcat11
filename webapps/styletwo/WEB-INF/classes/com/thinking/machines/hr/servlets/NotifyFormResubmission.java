@@ -10,6 +10,21 @@ doGet(request,response);
 }
 public void doGet(HttpServletRequest request, HttpServletResponse response)
 {
+//check Authentication
+HttpSession httpSession = request.getSession();
+if(httpSession.getAttribute("username")==null)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("/LoginForm.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+return;
+}catch(Exception exception)
+{
+//do nothing
+}
+}
 MessageBean messageBean = new MessageBean();
 messageBean.setHeading("Warning");
 messageBean.setMessage("Do not refresh page while submitting form");
