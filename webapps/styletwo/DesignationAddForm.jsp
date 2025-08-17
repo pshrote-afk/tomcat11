@@ -8,8 +8,8 @@
 <h2>Designation (Add Module)</h2>
 <br>
 <form method='post' action='/styletwo/AddDesignation.jsp' onsubmit='return validateForm(this)'>
-Designation
 <tm:FormId/>
+Designation
 <input type='text' id='title' name='title' maxlength='35' size='36' value='${designationBean.title}'>
 <span class='error' id='titleErrorSection'>
 <jsp:getProperty name='errorBean' property='error' />

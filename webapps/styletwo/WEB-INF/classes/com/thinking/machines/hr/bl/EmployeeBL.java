@@ -29,9 +29,9 @@ employeeBean.setDesignationCode(employeeDTO.getDesignationCode());
 employeeBean.setTitle(employeeDTO.getTitle());
 employeeBean.setDateOfBirth(simpleDateFormat.format(employeeDTO.getDateOfBirth()));
 employeeBean.setGender(employeeDTO.getGender());
-employeeBean.setIsIndian(employeeDTO.getIsIndian());
+employeeBean.setIsIndian(String.valueOf(employeeDTO.getIsIndian()));	//convert boolean to String
 employeeBean.setBasicSalary(employeeDTO.getBasicSalary().toPlainString());
-employeeBean.setPANNumber(employeeDTO.getPANNumber());
+employeeBean.setPanNumber(employeeDTO.getPANNumber());
 employeeBean.setAadharCardNumber(employeeDTO.getAadharCardNumber());
 list2.add(employeeBean);
 }

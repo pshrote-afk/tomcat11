@@ -6,11 +6,11 @@
 <h2>Employees</h2>
 <div class='employeeGrid'> 
 <!-- Employees div starts here -->
-<table border='5' style="width:100%">
+<table border='5' style="width:100%" id='employeesGridTable'>
 <thead>
 <tr>
 <th colspan='6' class='employeeGridHeader'>
-<a href='/styletwo/getEmployeeAddForm'>Add Employee</a> <!--doubt: Link to where-->
+<a href='/styletwo/EmployeeAddForm.jsp'>Add Employee</a> <!--doubt: Link to where-->
 </th>
 </tr>
 <tr>
@@ -23,17 +23,14 @@
 </tr>
 </thead>
 <tbody>
-
-<tm:EntityList populatorClass='com.thinking.machines.hr.bl.EmployeeBL' populatorMethod='getAll' name='employeeBean'>
-<tr style='cursor:pointer' onclick='selectEmployee(this,"${employeeBean.employeeId}")'>
-<td style='text-align:right'>${serialNumber}.</td>
-<td>${employeeBean.employeeId}</td>
-<td>${employeeBean.name}</td>
-<td>${employeeBean.title}</td>
-<td style='text-align:center'><a href='/styletwo/editEmployee?employeeId=${employeeBean.employeeId}'>Edit</a></td>
-<td style='text-align:center'><a href='/styletwo/confirmDeleteEmployee?employeeId=${employeeBean.employeeId}'>Delete</a></td>
+<tr style='cursor:pointer'>
+<td style='text-align:right' placeHolderId='serialNumber'></td>
+<td placeHolderId='employeeId'></td>
+<td placeHolderId='name'></td>
+<td placeHolderId='title'></td>
+<td placeHolderId='editOption'></td>
+<td placeHolderId='deleteOption'></td>
 </tr>
-</tm:EntityList>
 
 </tbody>
 </table>

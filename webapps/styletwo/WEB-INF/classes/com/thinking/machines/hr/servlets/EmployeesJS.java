@@ -35,18 +35,19 @@ pw.println("employee=new Employee();");
 pw.println("employee.employeeId=\""+employeeBean.getEmployeeId()+"\";");
 pw.println("employee.name=\""+employeeBean.getName()+"\";");
 pw.println("employee.designationCode="+employeeBean.getDesignationCode()+";");
-pw.println("employee.designation=\""+employeeBean.getTitle()+"\";");
+pw.println("employee.title=\""+employeeBean.getTitle()+"\";");
 pw.println("employee.dateOfBirth=\""+employeeBean.getDateOfBirth()+"\";");
 pw.println("employee.gender=\""+employeeBean.getGender()+"\";");
 pw.println("employee.isIndian="+employeeBean.getIsIndian()+";");
 pw.println("employee.basicSalary="+employeeBean.getBasicSalary()+";");
-pw.println("employee.panNumber=\""+employeeBean.getPANNumber()+"\";");
+pw.println("employee.panNumber=\""+employeeBean.getPanNumber()+"\";");
 pw.println("employee.aadharCardNumber=\""+employeeBean.getAadharCardNumber()+"\";");
 pw.println("employees["+k+"]=employee;");
 k++;
 }
 }catch(Exception exception)
 {
+System.out.println(exception.getMessage());
 RequestDispatcher requestDispatcher;
 requestDispatcher = request.getRequestDispatcher("ErrorPage.jsp");
 try

@@ -28,7 +28,22 @@ return;
 //do nothing
 }
 }
-int code=Integer.parseInt(request.getParameter("code"));
+int code=0;
+try
+{
+code = Integer.parseInt(request.getParameter("code"));
+}catch(NumberFormatException numberFormatException)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("Designations.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+}catch(Exception exception)
+{
+System.out.println(exception.getMessage());
+}
+}
 DesignationDAO designationDAO = new DesignationDAO();
 try
 {

@@ -8,23 +8,23 @@ private int designationCode;
 private String title;
 private String dateOfBirth;	//DTO has java.util.Date. Bean will have String for simplicity.
 private String gender;
-private boolean isIndian;
+private String isIndian;
 private String basicSalary;
 private String panNumber;
 private String aadharCardNumber;
 
 public EmployeeBean()
 {
-this.employeeId=null;
-this.name=null;
+this.employeeId="";
+this.name="";
 this.designationCode=0;
-this.title=null;
-this.dateOfBirth=null;
-this.gender=null;
-this.isIndian=false;
-this.basicSalary=null;
-this.panNumber=null;
-this.aadharCardNumber=null;
+this.title="";
+this.dateOfBirth="";
+this.gender="";
+this.isIndian="";
+this.basicSalary="";
+this.panNumber="";
+this.aadharCardNumber="";
 }
 public boolean isMale()
 {
@@ -33,6 +33,10 @@ return this.gender.equals("M");
 public boolean isFemale()
 {
 return this.gender.equals("F");
+}
+public boolean isIndian()
+{
+return this.isIndian.equals("Y");
 }
 public void setEmployeeId(java.lang.String employeeId)
 {
@@ -82,11 +86,11 @@ public java.lang.String getGender()
 {
 return this.gender;
 }
-public void setIsIndian(boolean isIndian)
+public void setIsIndian(String isIndian)
 {
 this.isIndian=isIndian;
 }
-public boolean getIsIndian()
+public String getIsIndian()
 {
 return this.isIndian;
 }
@@ -98,11 +102,11 @@ public String getBasicSalary()
 {
 return this.basicSalary;
 }
-public void setPANNumber(java.lang.String panNumber)
+public void setPanNumber(java.lang.String panNumber)
 {
 this.panNumber=panNumber;
 }
-public java.lang.String getPANNumber()
+public java.lang.String getPanNumber()
 {
 return this.panNumber;
 }
