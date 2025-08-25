@@ -1,0 +1,51 @@
+<%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %>
+<tm:Guard>
+<jsp:forward page='/LoginForm.jsp' />
+</tm:Guard>
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<title>HR Application</title>
+<link rel='stylesheet' type='text/css' href='/stylethree/css/styles.css'></link>
+</head>
+<body>
+<!-- Main container starts here -->
+<div class='main-container'>
+<!-- Header container starts here -->
+<div class='header-container'>
+<img src='/stylethree/images/logo.png' class='logo'><div class='brand-name'>Thinking Machines</div>
+<div class='user-panel'>
+<u>Username</u>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='/stylethree/logout'>Logout</a><br>
+<img src='/stylethree/images/user-icon.png' class='user-icon'>
+${username}
+
+</div>
+</div><!-- Header container ends here -->
+<!-- content-section starts here -->
+<div class='content'>
+
+<!-- left panel starts here -->
+<div class='content-left-panel'>
+
+<tm:If condition='${module==DESIGNATION}'>
+<b>Designations</b><br>
+</tm:If>
+<tm:If condition='${module!=DESIGNATION}'>
+<a href='/stylethree/Designations.jsp'>Designations</a><br>
+</tm:If>
+
+<tm:If condition='${module==EMPLOYEE}'>
+<b>Employees</b><br><br>
+</tm:If>
+<tm:If condition='${module!=EMPLOYEE}'>
+<a href='/stylethree/Employees.jsp'>Employees</a><br><br>
+</tm:If>
+
+<tm:If condition='${module!=HOME}'>
+<a href='/stylethree/index.jsp'>Home</a><br>
+</tm:If>
+
+</div><!-- left panel ends here -->
+
+<div class='content-right-panel'><!-- right panel starts here -->

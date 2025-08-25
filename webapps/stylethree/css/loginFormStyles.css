@@ -1,0 +1,81 @@
+.main-container
+{
+width:90hw;
+height:auto;
+border:1px solid black;
+}
+.header-container
+{
+margin:5px;
+width:90hw;
+height:auto;
+border:1px solid black;
+}
+.logo
+{
+float:left;
+width:35px;
+height:auto;
+padding:5px;
+}
+.brand-name
+{
+margin-top:9px;
+margin-bottom:9px;
+font-size:20pt;
+}
+.content
+{
+width:90hw;
+height:70vh;
+margin:5px;
+border:1px solid white;
+}
+
+.content-panel
+{
+height:65vh;
+margin-left:5px;
+margin-right:5px;
+margin-bottom:5px;
+margin-top:5px;
+padding:5px;
+border:1px solid black;
+overflow:auto;
+}
+.error
+{
+color:red;
+}
+.footer
+{
+width:90hw;
+height:auto;
+margin:5px;
+text-align:center;
+border:1px solid footer;
+}
+
+.login-panel-title
+{
+display:flex; 
+justify-content:center; 
+margin-top:75px; 
+padding:10px;
+}
+.login-module
+{
+text-align:center; 
+background:lightgray; 
+border: 1px solid black; 
+float: center; 
+margin-left:450px; 
+margin-right:450px;
+padding:20px;
+}
+.login-button
+{
+background-color:#ffcccc; 
+color:black; 
+padding:3px 
+}

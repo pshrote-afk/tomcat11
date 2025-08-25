@@ -1,0 +1,78 @@
+package com.thinking.machines.hr.servlets;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.*;
+import java.util.*;
+import com.thinking.machines.hr.dl.*;
+import com.thinking.machines.hr.beans.*;
+public class ConfirmDeleteDesignation extends HttpServlet
+{
+public void doGet(HttpServletRequest request,HttpServletResponse response)
+{
+doPost(request,response);
+}
+public void doPost(HttpServletRequest request,HttpServletResponse response)
+{
+//check Authentication
+HttpSession httpSession = request.getSession();
+if(httpSession.getAttribute("username")==null)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("/LoginForm.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+return;
+}catch(Exception exception)
+{
+//do nothing
+}
+}
+int code=0;
+try
+{
+code = Integer.parseInt(request.getParameter("code"));
+}catch(NumberFormatException numberFormatException)
+{
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("Designations.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+}catch(Exception exception)
+{
+System.out.println(exception.getMessage());
+}
+}
+DesignationDAO designationDAO = new DesignationDAO();
+try
+{
+DesignationDTO designationDTO = designationDAO.getByCode(code);
+DesignationBean designationBean = new DesignationBean();
+designationBean.setCode(designationDTO.getCode());
+designationBean.setTitle(designationDTO.getTitle());
+request.setAttribute("designationBean",designationBean);
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("ConfirmDeleteDesignation.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+}catch(Exception exception)
+{
+System.out.println(exception.getMessage());
+}
+}catch(DAOException daoException)
+{
+//means such a code doesn't exist
+RequestDispatcher requestDispatcher;
+requestDispatcher = request.getRequestDispatcher("Designations.jsp");
+try
+{
+requestDispatcher.forward(request,response);
+}catch(Exception exception)
+{
+System.out.println(exception.getMessage());
+}
+}
+}
+}

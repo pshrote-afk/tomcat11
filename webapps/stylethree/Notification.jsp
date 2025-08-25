@@ -1,0 +1,40 @@
+<%@taglib uri='/WEB-INF/mytags/tmtags.tld' prefix='tm' %> 
+<tm:Guard>
+<jsp:forward page='/LoginForm.jsp'/>
+</tm:Guard>
+<jsp:useBean id='messageBean' scope='request' class='com.thinking.machines.hr.beans.MessageBean' />
+
+<jsp:include page='/MasterPageTopSection.jsp' />
+
+<h2>${messageBean.heading}</h2>
+${messageBean.message}
+<br>
+
+<!-- what if designer could write code -->
+
+<tm:If condition='${messageBean.generateButtons}'>
+
+<table>
+<tr>
+<td>
+<form action='/styletwo/${messageBean.buttonOneAction}'>
+<button type='submit'>${messageBean.buttonOneText}</button>
+</form>
+</td>
+
+<tm:If condition='${messageBean.generateTwoButtons}'>
+
+<td>
+<form action='/styletwo/${messageBean.buttonTwoAction}'>
+<button type='submit'>${messageBean.buttonTwoText}</button>
+</form>
+</td>
+
+</tm:If>
+
+</tr>
+</table>
+
+</tm:If>
+
+<jsp:include page ='/MasterPageBottomSection.jsp' />
