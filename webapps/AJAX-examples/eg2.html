@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<script>
+function getDesignation()
+{
+var titleSpan = document.getElementById('title');
+titleSpan.innerHTML = "";
+var code = document.getElementById("code").value;
+
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function() {
+
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(responseData=="INVALID")
+{
+alert('Invalid designation code');
+}
+else
+{
+var splits = responseData.split(",");
+titleSpan.innerHTML = splits[1];
+}
+}
+else
+{
+alert('some prob');
+}
+}
+};
+
+var requestURL = "servletTwo?code=" + encodeURI(code);
+xmlHttpRequest.open('GET',requestURL,true);
+xmlHttpRequest.send();
+}
+</script>
+</head>
+
+<body>
+<h1> Example 2 </h2><br>
+Enter code <input type='text' id='code'>
+<button type='button' onclick='getDesignation()'> Get Designation </button> <br><br>
+Title: <span id='title'></span><br>
+
+<a href='/something/index.html'>Home</a>
+</body>
+</html>

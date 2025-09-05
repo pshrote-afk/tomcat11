@@ -2,7 +2,7 @@
 <tm:Module name='EMPLOYEE'></tm:Module>
 <jsp:useBean id='employeeBean' scope='request' class='com.thinking.machines.hr.beans.EmployeeBean' />
 <jsp:include page='/MasterPageTopSection.jsp' />
-<script src='/styletwo/js/EmployeeDeleteForm.js'></script>
+<script src='/styletwo/js/ConfirmDeleteEmployee.js'></script>
 <h2>Employee (Delete Module)</h2><br>
 <form method='post' action='/styletwo/DeleteEmployee.jsp' onsubmit='return validateForm(this)'>
 <input type='hidden' id='employeeId' name='employeeId' value='${employeeBean.employeeId}'>
