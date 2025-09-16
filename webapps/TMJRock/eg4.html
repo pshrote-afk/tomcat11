@@ -1,0 +1,174 @@
+<DOCTYPE HTML>
+<html lang='en>
+<meta charset utf='8'>
+<head>
+<title>Modal</title>
+<script>
+//TMJRock part starts here
+function $$$(parameter)
+{
+element = document.getElementById(parameter);
+return {
+isValid: function(json){
+var isValid=true;
+firstInvalidField=null;
+
+var firstKey = Object.keys(json)[0];
+var firstObj = json[firstKey];
+var name = document.getElementsByName(firstKey)[0].value;
+
+var nameErrorSection = document.getElementById(firstObj["error-pane"]);
+nameErrorSection.innerHTML='';
+if(firstObj["required"])	//firstObj["required"] will return True/False
+{
+if(name.length==0)
+{
+nameErrorSection.innerHTML = firstObj["errors"]["required"];
+if(firstInvalidField==null) firstInvalidField=document.getElementsByName(firstKey)[0];
+isValid=false;
+}
+}
+if(name.length > firstObj["max-length"])
+{
+nameErrorSection.innerHTML = firstObj["errors"]["max-length"];
+if(firstInvalidField==null) firstInvalidField=document.getElementsByName(firstKey)[0];
+isValid=false;
+}
+
+var secondKey = Object.keys(json)[1];
+var secondObj = json[secondKey];
+var address = document.getElementsByName(secondKey)[0].value;
+var addressErrorSection = document.getElementById(secondObj["error-pane"]);
+addressErrorSection.innerHTML='';
+if(secondObj["required"])
+{
+if(address.length==0)
+{
+addressErrorSection.innerHTML = secondObj["errors"]["required"];
+if(firstInvalidField==null) firstInvalidField = document.getElementsByName(secondKey)[0];
+isValid=false;
+}
+}
+
+var thirdKey = Object.keys(json)[2];
+var thirdObj = json[thirdKey];
+var city = document.getElementsByName(thirdKey)[0].value;
+var cityErrorSection = document.getElementById(thirdObj["error-pane"]);
+cityErrorSection.innerHTML='';
+if(city==thirdObj["invalid"])
+{
+cityErrorSection.innerHTML = thirdObj["errors"]["invalid"];
+if(firstInvalidField==null) firstInvalidField = document.getElementsByName(thirdKey)[0];
+isValid=false;
+}
+
+var fourthKey = Object.keys(json)[3];
+var fourthObj = json[fourthKey];
+var gender = document.getElementsByName(fourthKey);
+var genderErrorSection = document.getElementById(fourthObj["error-pane"]);
+genderErrorSection.innerHTML='';
+if(fourthObj["required"])
+{
+if(gender[0].checked==false && gender[1].checked==false)
+{
+genderErrorSection.innerHTML = fourthObj["errors"]["required"];
+isValid=false;
+}
+}
+
+var fifthKey = Object.keys(json)[4];
+var fifthObj = json[fifthKey];
+var agreeCheckbox = document.getElementsByName(fifthKey)[0];
+if(fifthObj["required-state"])
+{
+if(agreeCheckbox.checked!=fifthObj["required-state"])
+{
+alert(fifthObj["errors"]["required-state"]);
+}
+}
+
+if(firstInvalidField!=null) firstInvalidField.focus();
+return isValid;
+} //end of isValid
+}; //end of return
+}
+
+//TMJRock part ends here
+//TMJRock user script starts here
+function doSomething() //expected to return True/False
+{
+return $$$("someForm").isValid({
+"nm":{
+"required":true,
+"max-length":20,
+"error-pane":"nmErrorSection",
+"errors":{
+"required":"Name required",
+"max-length":"Name cannot exceed 20 characters"
+}
+},
+"ad":{
+"required":true,
+"error-pane":"adErrorSection",
+"errors":{
+"required":"Address required"
+}
+},
+"ct":{
+"invalid":-1,
+"error-pane":"ctErrorSection",
+"errors":{
+"invalid":"Select city"
+}
+},
+"gender":{
+"required":true,
+"error-pane":"genderErrorSection",
+"errors":{
+"required":"Select gender"
+}
+},
+"agree":{
+"required-state":true,
+"display-alert":true,
+"errors":{
+"required-state":"Select 'I Agree' checkbox"
+}
+}
+});
+}
+
+
+</script>
+</head>
+<body>
+<h1>TMJRock Validations</h1>
+<form id='someForm' action='whatever' onsubmit='return doSomething()'>
+Name <input type='text' name='nm' id='nm'>
+<span id='nmErrorSection'></span><br>
+Address <textarea name='ad' id='ad'></textarea>
+<span id='adErrorSection'></span>
+<br>
+Select city
+<select id='ct' name='ct'>
+<option value='-1'>Select city</option>
+<option value='1'>Ujjain</option>
+<option value='2'>Mathura</option>
+<option value='3'>Vrindavan</option>
+</select><span id='ctErrorSection'></span>
+<br>
+
+Gender &nbsp;&nbsp;&nbsp;&nbsp;
+Male <input type='radio' name='gender' id='ml' value='M'>
+&nbsp;&nbsp;&nbsp;&nbsp;
+Female <input type='radio' name='gender' id='fe' value='F'>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<span id='genderErrorSection'></span>
+<br>
+I agree
+<input type='checkbox' name='agree' id='ag' value='Y'>
+<br><br>
+<button type='submit'>Register</button>
+</form>
+</body>
+</html>
