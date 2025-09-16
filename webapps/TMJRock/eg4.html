@@ -13,28 +13,93 @@ isValid: function(json){
 var isValid=true;
 firstInvalidField=null;
 
-var firstKey = Object.keys(json)[0];
-var firstObj = json[firstKey];
-var name = document.getElementsByName(firstKey)[0].value;
+var i=0;
+var jsonLength = Object.keys(json).length; 
+while(i < jsonLength)
+{
 
-var nameErrorSection = document.getElementById(firstObj["error-pane"]);
-nameErrorSection.innerHTML='';
-if(firstObj["required"])	//firstObj["required"] will return True/False
+var jsonKey = Object.keys(json)[i];
+var jsonValue = json[jsonKey];
+// idea: if elementValue has "required" key then do this errorSection check. (corner case: gender. It has required. But it needs two fields to be checked.
+// else if it has "required-state", no errorSection, only alert.
+
+if(jsonValue["required"]!=undefined || jsonValue["invalid"]!=undefined)
 {
-if(name.length==0)
+var elementValue = document.getElementsByName(jsonKey);
+if(elementValue.length > 1 && jsonValue["required"]!=undefined)
 {
-nameErrorSection.innerHTML = firstObj["errors"]["required"];
-if(firstInvalidField==null) firstInvalidField=document.getElementsByName(firstKey)[0];
+elementValue = document.getElementsByName(jsonKey);
+}
+else
+{
+elementValue = document.getElementsByName(jsonKey)[0].value;
+}
+
+
+// issue: city also has multiple elements by same name. Hence cause of this arrangement, city is also getting selected
+
+var elementErrorSection = document.getElementById(jsonValue["error-pane"]);
+elementErrorSection.innerHTML='';
+if(jsonValue["required"])	//jsonValue["required"] will return True/False
+{
+if(elementValue.length==0)
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["required"];
+if(firstInvalidField==null) firstInvalidField=document.getElementsByName(jsonKey)[0];	// cannot pick using getElementsById, because 'name' has been passed. So we don't know what the 'id' is.
 isValid=false;
 }
 }
-if(name.length > firstObj["max-length"])
+
+if(elementValue==jsonValue["invalid"])
 {
-nameErrorSection.innerHTML = firstObj["errors"]["max-length"];
-if(firstInvalidField==null) firstInvalidField=document.getElementsByName(firstKey)[0];
+elementErrorSection.innerHTML = jsonValue["errors"]["invalid"];
+if(firstInvalidField==null) firstInvalidField = document.getElementsByName(jsonKey)[0];
 isValid=false;
 }
 
+if(elementValue.length>1 && elementValue[0].checked==false && elementValue[1].checked==false)	//validation for gender. //elementValue.length>1 means 'elementValue' is holding 2 or more values.
+{
+var throwError = true;
+for(var k=0;i<elementValue.length;i++)	
+{
+if(elementValue[k].checked==true)	// as good as checking (elementValue[0].checked==false && elementValue[1].checked==false)
+{
+throwError = false;
+}
+}
+if(throwError==true)
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["required"];
+isValid=false;
+}
+}
+
+if(elementValue.length > jsonValue["max-length"])
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["max-length"];
+if(firstInvalidField==null) firstInvalidField=document.getElementsByName(jsonKey)[0];
+isValid=false;
+}
+}
+
+else if(jsonValue["required-state"]!=undefined)
+{
+var elementValue = document.getElementsByName(jsonKey)[0];
+if(jsonValue["required-state"]!=undefined)
+{
+if(elementValue.checked != jsonValue["required-state"])
+{
+alert(jsonValue["errors"]["required-state"]);
+}
+}
+
+
+}
+i++;
+} //end of while for traversing keys
+
+
+/* for reference //done done
 var secondKey = Object.keys(json)[1];
 var secondObj = json[secondKey];
 var address = document.getElementsByName(secondKey)[0].value;
@@ -87,7 +152,10 @@ alert(fifthObj["errors"]["required-state"]);
 }
 }
 
+*/
+
 if(firstInvalidField!=null) firstInvalidField.focus();
+alert(isValid + " is valid");
 return isValid;
 } //end of isValid
 }; //end of return
@@ -155,6 +223,11 @@ Select city
 <option value='1'>Ujjain</option>
 <option value='2'>Mathura</option>
 <option value='3'>Vrindavan</option>
+<option value='4'>Yashodha</option>
+<option value='5'>Mayya</option>
+<option value='6'>Krishna</option>
+
+
 </select><span id='ctErrorSection'></span>
 <br>
 
