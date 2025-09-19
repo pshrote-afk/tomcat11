@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<script>
+//TMJRock code starts
+
+//TMJRock code ends
+//foll. is TMJRock user
+function DataModel()
+{
+this.data = null;
+this.getRowCount = function(){
+if(this.data==null) return 0;
+else return this.data.length;
+}
+//many more functions to help grid know how to make table
+}
+var myDataModel = new DataModel();
+
+function whatever()
+{
+//var employees = [{},{},{}];
+myDataModel.data = employees;
+
+//code to populate myDataModel with data (list of objects)
+}
+
+function doSomething()
+{
+$$$.grid({
+"model" = myDataModel,
+"pagination":true,
+"pageSize":10,
+"rowSelectionEnabled":true
+});
+}
+$$$.onDocumentLoaded(doSomething);
+</script>
+</head>
+<body>
+<div id='someId'>
+</div>
+</body>
+</html>

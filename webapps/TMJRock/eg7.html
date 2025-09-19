@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<script>
+function doSomething()
+{
+//print innerHTML of all elements which has tm="yes" attribute value pair in it
+
+var allElements = document.querySelectorAll('*');
+var element;
+var value;
+var i=0;
+while(i<allElements.length)
+{
+element = allElements[i];
+value = element.getAttribute('tm');
+if(value=='yes')
+{
+console.log(element.innerHTML);
+}
+i++;
+}
+
+}
+
+
+</script>
+
+<body>
+God is great
+<div id='whatever1' tm='yes'>
+Hello Hello hello<br>
+Hello Hello hello<br>
+Hello Hello hello<br>
+Hello Hello hello<br>
+Hello Hello hello<br>
+
+</div>
+
+<span id='whatever2' tm='yes'>
+Whatever whatever whatever<br>
+Whatever whatever whatever<br>
+Whatever whatever whatever<br>
+Whatever whatever whatever<br>
+Whatever whatever whatever<br>
+</span>
+
+<div id='cool'>
+Cool cool cool<br>
+Cool cool cool<br>
+Cool cool cool<br>
+</div>
+
+<span id='something' tm='no'>
+Something something<br>
+</span>
+
+
+<button type='button' onClick='doSomething()'>
+Do something
+</button>
+</body>
+</html>
