@@ -1,0 +1,191 @@
+<DOCTYPE HTML>
+<html lang='en>
+<meta charset utf='8'>
+<head>
+<title>Modal</title>
+<script>
+//TMJRock part starts here
+function $$$(parameter)
+{
+element = document.getElementById(parameter);
+return {
+isValid: function(json){
+var isValid=true;
+firstInvalidField=null;
+
+var i=0;
+var jsonLength = Object.keys(json).length; 
+while(i < jsonLength)
+{
+
+var jsonKey = Object.keys(json)[i];
+var jsonValue = json[jsonKey];
+
+// idea: if elementValue has "required" key then do this errorSection check. (corner case: gender. It has required. But it needs two fields to be checked.
+// else if it has "required-state", no errorSection, only alert.
+
+if(jsonValue["required"]!=undefined || jsonValue["invalid"]!=undefined)
+{
+var elementValue = document.getElementsByName(jsonKey);
+if(elementValue.length > 1 && jsonValue["required"]!=undefined)
+{
+elementValue = document.getElementsByName(jsonKey);
+}
+else
+{
+elementValue = document.getElementsByName(jsonKey)[0].value;
+}
+
+
+
+var elementErrorSection = document.getElementById(jsonValue["error-pane"]);
+elementErrorSection.innerHTML='';
+if(jsonValue["required"])	//jsonValue["required"] will return True/False
+{
+if(elementValue.length==0)
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["required"];
+if(firstInvalidField==null) firstInvalidField=document.getElementsByName(jsonKey)[0];	// cannot pick using getElementsById, because 'name' has been passed. So we don't know what the 'id' is.
+isValid=false;
+}
+}
+
+if(elementValue==jsonValue["invalid"])
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["invalid"];
+if(firstInvalidField==null) firstInvalidField = document.getElementsByName(jsonKey)[0];
+isValid=false;
+}
+
+if(elementValue.length>1 && elementValue[0].checked==false && elementValue[1].checked==false)	//validation for gender. //elementValue.length>1 means 'elementValue' is holding 2 or more values.
+{
+var throwError = true;
+for(var k=0;i<elementValue.length;i++)	
+{
+if(elementValue[k].checked==true)	// as good as checking (elementValue[0].checked==false && elementValue[1].checked==false)
+{
+throwError = false;
+}
+}
+if(throwError==true)
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["required"];
+isValid=false;
+}
+}
+
+if(elementValue.length > jsonValue["max-length"])
+{
+elementErrorSection.innerHTML = jsonValue["errors"]["max-length"];
+if(firstInvalidField==null) firstInvalidField=document.getElementsByName(jsonKey)[0];
+isValid=false;
+}
+}
+
+else if(jsonValue["required-state"]!=undefined)
+{
+var elementValue = document.getElementsByName(jsonKey)[0];
+if(jsonValue["required-state"]!=undefined)
+{
+if(elementValue.checked != jsonValue["required-state"])
+{
+alert(jsonValue["errors"]["required-state"]);
+}
+}
+
+
+}
+i++;
+} //end of while for traversing keys
+
+
+if(firstInvalidField!=null) firstInvalidField.focus();
+return isValid;
+} //end of isValid
+}; //end of return
+}
+
+//TMJRock part ends here
+//TMJRock user script starts here
+function doSomething() //expected to return True/False
+{
+return $$$("someForm").isValid({
+"nm":{
+"required":true,
+"max-length":20,
+"error-pane":"nmErrorSection",
+"errors":{
+"required":"Name required",
+"max-length":"Name cannot exceed 20 characters"
+}
+},
+"ad":{
+"required":true,
+"error-pane":"adErrorSection",
+"errors":{
+"required":"Address required"
+}
+},
+"ct":{
+"invalid":-1,
+"error-pane":"ctErrorSection",
+"errors":{
+"invalid":"Select city"
+}
+},
+"gender":{
+"required":true,
+"error-pane":"genderErrorSection",
+"errors":{
+"required":"Select gender"
+}
+},
+"agree":{
+"required-state":true,
+"display-alert":true,
+"errors":{
+"required-state":"Select 'I Agree' checkbox"
+}
+}
+});
+}
+
+
+</script>
+</head>
+<body>
+<h1>TMJRock Validations</h1>
+<form id='someForm' action='whatever' onsubmit='return doSomething()'>
+Name <input type='text' name='nm' id='nm'>
+<span id='nmErrorSection'></span><br>
+Address <textarea name='ad' id='ad'></textarea>
+<span id='adErrorSection'></span>
+<br>
+Select city
+<select id='ct' name='ct'>
+<option value='-1'>Select city</option>
+<option value='1'>Ujjain</option>
+<option value='2'>Mathura</option>
+<option value='3'>Vrindavan</option>
+<option value='4'>Yashodha</option>
+<option value='5'>Mayya</option>
+<option value='6'>Krishna</option>
+
+
+</select><span id='ctErrorSection'></span>
+<br>
+
+Gender &nbsp;&nbsp;&nbsp;&nbsp;
+Male <input type='radio' name='gender' id='ml' value='M'>
+&nbsp;&nbsp;&nbsp;&nbsp;
+Female <input type='radio' name='gender' id='fe' value='F'>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<span id='genderErrorSection'></span>
+<br>
+I agree
+<input type='checkbox' name='agree' id='ag' value='Y'>
+<br><br>
+<button type='submit'>Register</button>
+</form>
+</body>
+</html>

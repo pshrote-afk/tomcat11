@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<script>
+//TMJRock code starts
+$$$.onDocumentLoaded = function(functionAsParameter){
+document.addEventListener('DOMContentLoaded',functionAsParameter);
+}
+var selectedRow = null;
+function selectEmployee(row)
+{
+if(row==selectedRow) return;
+if(selectedRow==null)
+{
+row.style.color='white';
+row.style.background='gray';
+}
+else
+{
+selectedRow.style.color='black';
+selectedRow.style.background='white';
+row.style.color='white';
+row.style.background='gray';
+}
+selectedRow = row;
+
+}
+
+function $$$()
+{
+}
+$$$.grid = function(elementId, configurationsJson){
+var element = document.getElementById(elementId);
+var table = whatever();
+element.appendChild(table);
+
+if(configurationsJson.rowSelectionEnabled!=undefined && configurationsJson.rowSelectionEnabled==true)
+{
+var tableBody = table.getElementsByTagName('tbody')[0];
+var tableRows = tableBody.getElementsByTagName('tr');
+var row;
+for(var i=0;i<tableRows.length;i++)
+{
+row = tableRows[i];
+row.onclick = function(){
+selectEmployee(this);
+};
+}
+
+}
+
+}
+
+
+//TMJRock code ends
+//foll. is TMJRock user
+function DataModel()
+{
+this.data = null;
+this.getRowCount = function(){
+if(this.data==null) return 0;
+else return this.data.length;
+}
+//many more functions to help grid know how to make table
+}
+var myDataModel = new DataModel();
+
+function whatever()	//creates and returns table
+{
+var employees = [				//later: get employees dynamically
+{ employeeId: 1, name: "Amit", salary: 50000 },
+{ employeeId: 2, name: "Priya", salary: 60000 },
+{ employeeId: 3, name: "Rahul", salary: 55000 }
+];
+myDataModel.data = employees;
+
+
+//code to populate myDataModel with data (list of objects)
+
+var table = document.createElement('table');
+table.border = '1';
+var tableHeader = document.createElement('thead');
+var tableBody = document.createElement('tbody');
+table.appendChild(tableHeader);
+table.appendChild(tableBody);
+
+var headerRow = document.createElement('tr');
+var th;
+th = document.createElement('th');
+th.textContent = "employeeId";
+headerRow.appendChild(th);
+th = document.createElement('th');
+th.textContent = "name";
+headerRow.appendChild(th);
+th = document.createElement('th');
+th.textContent = "salary";
+headerRow.appendChild(th);
+tableHeader.appendChild(headerRow);
+
+var j;
+var keys;
+var key;
+for(var i=0;i < myDataModel.data.length;i++)
+{
+rowData = myDataModel.data[i];
+keys = Object.keys(rowData);	// ["employeeId","name","salary"]
+var tr = document.createElement('tr');
+tr.style.cursor='pointer';
+var td;
+j=0;
+while(j < keys.length)
+{
+key = keys[j];
+td = document.createElement('td');
+td.textContent = rowData[key];
+tr.appendChild(td);
+j++;
+}
+tableBody.appendChild(tr);
+}
+return table;
+}
+
+function doSomething()
+{
+$$$.grid("someId",{
+"model" : myDataModel,
+"pagination":true,
+"pageSize":10,
+"rowSelectionEnabled":true
+});
+}
+$$$.onDocumentLoaded(doSomething);
+</script>
+</head>
+<body>
+<div id='someId'>
+</div>
+</body>
+</html>

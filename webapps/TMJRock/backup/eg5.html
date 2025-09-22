@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<script>
+//TMJRock code starts here
+function $$$()
+{
+}
+var accordianPaneDiv = null;
+
+$$$.onDocumentLoaded = function(functionAsParameter){
+document.addEventListener('DOMContentLoaded',functionAsParameter);
+}
+
+$$$.openAccordianPane = function(accordianHeading){
+var next = accordianHeading.nextElementSibling;
+if(next == accordianPaneDiv) 
+{
+next.hidden = true;
+accordianPaneDiv = null;
+return;
+}
+
+if(accordianPaneDiv==null)
+{
+next.hidden = false;
+}
+else
+{
+accordianPaneDiv.hidden = true;
+next.hidden = false;
+}
+accordianPaneDiv = next;
+
+}
+
+$$$.toAccordian = function(elementId){
+var allH3 = document.querySelectorAll('h3');
+var i = 0;
+var next;
+while(i<allH3.length)
+{
+allH3[i].onclick = function(){
+$$$.openAccordianPane(this);
+}
+allH3[i].style.cursor = 'pointer';
+
+next = allH3[i].nextElementSibling;
+next.hidden = true;
+
+i++;
+}
+
+
+}
+
+
+
+//TMJRock code ends here
+//TMJRock user script starts here
+$$$.onDocumentLoaded(function(){
+$$$.toAccordian("mymy");
+});
+
+
+$$$.onDocumentLoaded(function(){
+$$$.toAccordian('youryour');
+});
+
+
+</script>
+</head>
+
+<body>
+<div id='mymy'>
+<h3>Heading 1</h3>
+<div>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+</div>
+
+<h3>Heading 2</h3>
+<div>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+</div>
+
+<h3>Heading 3</h3>
+<div>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+</div>
+
+</div> <!--end of 'mymy'-->
+
+<div id='youryour'>
+<h3>New Heading 1</h3>
+<div>
+<span>Span 1</span>
+<span>Span 2</span>
+</div>
+
+<h3>New Heading 2</h3>
+<div>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+</div>
+
+<h3>New Heading 3</h3>
+<div>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+</div>
+
+<h3>New Heading 4</h3>
+<div>
+Content 2 Content 2 Content 2 <br>
+</div>
+
+<h3>New Heading 5</h3>
+<div>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+Content 2 Content 2 Content 2 <br>
+</div>
+
+
+</div>
+
+
+</body>
+</html>

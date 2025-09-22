@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<script>
+//this will be part of TMJRock JavaScript library in the end
+
+function $$$(parameter){
+var element;
+element = document.getElementById(parameter);
+
+return {
+fillComboBox : function(configurations){
+var designations = configurations.dataSource;
+
+var obj1;
+if(configurations.firstOption!=null)
+{
+obj1 = document.createElement("option");
+obj1.value = configurations.firstOption.value;
+obj1.text = configurations.firstOption.text;
+element.appendChild(obj1);
+}
+for(var i=0;i<designations.length;i++)
+{
+obj1 = document.createElement("option");
+obj1.value = designations[i][configurations.value]; // In Java we would've written - designations[i].(configurations.value);
+obj1.text = designations[i][configurations.text];
+element.appendChild(obj1);
+}
+}
+};
+} //end of $$$ function
+
+$$$.ajax = function(obj){
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
+{
+obj.success(JSON.stringify(responseData));
+}
+else if(responseData.success==false)
+{
+obj.failure();
+}
+else
+{
+alert("some problem");
+}
+}
+}
+};
+xmlHttpRequest.open(obj.methodType,obj.url,true);
+xmlHttpRequest.send();
+} //end of $$$.ajax function
+
+//TMJRock library code ends here
+
+
+function populateDesignations()
+{
+
+$$$.ajax({
+"url":"servletOne",
+"methodType":"GET",
+
+"success":function(responseData){
+alert("entered success function");
+responseData = JSON.parse(responseData);
+var designations = responseData.data;
+$$$("designationCode").fillComboBox({
+"dataSource":designations,
+"text":"title",
+"value":"code",
+"firstOption": {
+"text":"<Select Designation>",
+"value":"-1"
+}
+});
+},
+"failure":function(){
+alert("entered failure function");
+alert("some problem");
+}
+});
+}
+
+window.addEventListener('load',populateDesignations);
+</script>
+</head>
+
+<body>
+Designations: 
+<select id='designationCode'>
+</select>
+<br>
+<a href='/TMJRock/index.html'>Home</a><br><br>
+
+
+
+
+
+</body>
+</html>
