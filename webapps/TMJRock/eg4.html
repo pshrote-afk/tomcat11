@@ -1,191 +1,274 @@
-<DOCTYPE HTML>
-<html lang='en>
-<meta charset utf='8'>
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
 <head>
-<title>Modal</title>
+<title>AJAX Examples</title>
 <script>
-//TMJRock part starts here
-function $$$(parameter)
-{
-element = document.getElementById(parameter);
-return {
-isValid: function(json){
-var isValid=true;
-firstInvalidField=null;
+function $$$(cid){
+let element = document.getElementById(cid);
+if(!element) throw "Invalid id: "+cid;
+return new TMJRockElement(element);
+} //end of $$$ function
 
-var i=0;
-var jsonLength = Object.keys(json).length; 
-while(i < jsonLength)
+function TMJRockElement(element)
 {
+this.element = element;
 
-var jsonKey = Object.keys(json)[i];
-var jsonValue = json[jsonKey];
+this.fillComboBox = function(configurations){
+var designations = configurations.dataSource;
 
-// idea: if elementValue has "required" key then do this errorSection check. (corner case: gender. It has required. But it needs two fields to be checked.
-// else if it has "required-state", no errorSection, only alert.
-
-if(jsonValue["required"]!=undefined || jsonValue["invalid"]!=undefined)
+var obj1;
+if(configurations.firstOption!=null)
 {
-var elementValue = document.getElementsByName(jsonKey);
-if(elementValue.length > 1 && jsonValue["required"]!=undefined)
+obj1 = document.createElement("option");
+obj1.value = configurations.firstOption.value;
+obj1.text = configurations.firstOption.text;
+element.appendChild(obj1);
+}
+for(var i=0;i<designations.length;i++)
 {
-elementValue = document.getElementsByName(jsonKey);
+obj1 = document.createElement("option");
+obj1.value = designations[i][configurations.value]; // In Java we would've written - designations[i].(configurations.value);
+obj1.text = designations[i][configurations.text];
+element.appendChild(obj1);
+}
+}; //end of TMJRockElement fillComboBox().
+
+this.html = function(content)
+{
+if(typeof this.element.innerHTML=="string")
+{
+if((typeof content)=="string")
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+return null;
+}
+
+this.value = function(content)
+{
+if(typeof this.element.value)
+{
+if((typeof content) == "string")
+{
+this.element.value = content;
+}
+return this.element.value;
+}
+return null;
+}
+
+
+
+} //end of TMJRockElement
+
+
+$$$.ajax = function(jsonObject)
+{
+if(!jsonObject["url"]) throw "url property is missing in call to ajax";
+let url = jsonObject["url"];
+if((typeof url)!="string") throw "url property should be of string type in call to ajax";
+
+let methodType = "GET"
+if(jsonObject["methodType"])
+{
+methodType = jsonObject["methodType"];
+if((typeof methodType)!="string") throw "methodType property should be of string type in call to ajax";
+methodType = methodType.toUpperCase();
+if(["GET","POST"].includes(methodType)==false) throw "methodType should be GET/POST in call to ajax";
+}
+
+let onSuccess=null;
+if(jsonObject["success"])
+{
+onSuccess = jsonObject["success"];
+if((typeof onSuccess)!="function") throw "success property should be a function in call to ajax";
+}
+
+let onFailure=null;
+if(jsonObject["failure"])
+{
+onFailure = jsonObject["failure"];
+if((typeof onFailure)!="function") throw "failure property should be a function in call to ajax";
+}
+
+if(methodType=="GET")
+{
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(onSuccess) onSuccess(responseData);
 }
 else
 {
-elementValue = document.getElementsByName(jsonKey)[0].value;
+if(onFailure) onFailure();
 }
+}
+};
+
+if(jsonObject["data"])
+{
+let jsonData = jsonObject["data"];
+let queryString = "";
+let qsName;
+let qsValue;
+let xx=0;
+for(k in jsonData)
+{
+if(xx==0) queryString = "?";	//Will run first time
+if(xx>0) queryString += "&";	//Won't run first time. Then will run everytime.
+xx++;
+qsName = encodeURI(k);
+qsValue = encodeURI(jsonData[k]);
+queryString = queryString + qsName + "=" + qsValue;
+}
+url+=queryString;
+}
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+} //"GET" part ends here
+
+if(methodType=="POST")
+{
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
 
 
-
-var elementErrorSection = document.getElementById(jsonValue["error-pane"]);
-elementErrorSection.innerHTML='';
-if(jsonValue["required"])	//jsonValue["required"] will return True/False
+let jsonData = {};
+if(jsonObject["data"])
 {
-if(elementValue.length==0)
-{
-elementErrorSection.innerHTML = jsonValue["errors"]["required"];
-if(firstInvalidField==null) firstInvalidField=document.getElementsByName(jsonKey)[0];	// cannot pick using getElementsById, because 'name' has been passed. So we don't know what the 'id' is.
-isValid=false;
-}
+jsonData = jsonObject["data"];
 }
 
-if(elementValue==jsonValue["invalid"])
+if((typeof jsonObject["sendJSON"])!=="boolean") throw "sendJSON property should be of boolean type in call to ajax";
+
+if(jsonObject["sendJSON"]==true)
 {
-elementErrorSection.innerHTML = jsonValue["errors"]["invalid"];
-if(firstInvalidField==null) firstInvalidField = document.getElementsByName(jsonKey)[0];
-isValid=false;
+xmlHttpRequest.open("POST",url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(jsonData));
+}
+else if(jsonObject["sendJSON"]==false || jsonObject["sendJSON"]==undefined)
+{
+//make queryString
+var queryString = "";
+var qsName;
+var qsValue;
+var xx=0;
+for(k in jsonData)
+{
+if(xx>0) queryString+="&";
+xx++;
+qsName = encodeURI(k);
+qsValue = encodeURI(jsonData[k]);
+queryString = queryString + qsName + "=" + qsValue;
+}
+else
+{
+throw "some problem in sendJSON property";
 }
 
-if(elementValue.length>1 && elementValue[0].checked==false && elementValue[1].checked==false)	//validation for gender. //elementValue.length>1 means 'elementValue' is holding 2 or more values.
-{
-var throwError = true;
-for(var k=0;i<elementValue.length;i++)	
-{
-if(elementValue[k].checked==true)	// as good as checking (elementValue[0].checked==false && elementValue[1].checked==false)
-{
-throwError = false;
-}
-}
-if(throwError==true)
-{
-elementErrorSection.innerHTML = jsonValue["errors"]["required"];
-isValid=false;
-}
+xmlHttpRequest.open("POST",url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+xmlHttpRequest.send(queryString);
 }
 
-if(elementValue.length > jsonValue["max-length"])
+}
+}//end of $$$.ajax function
+
+//TMJRock library code ends here
+
+function getDesignation()
 {
-elementErrorSection.innerHTML = jsonValue["errors"]["max-length"];
-if(firstInvalidField==null) firstInvalidField=document.getElementsByName(jsonKey)[0];
-isValid=false;
-}
-}
 
-else if(jsonValue["required-state"]!=undefined)
+var titleSpan = $$$("title");
+titleSpan.html("");
+var code = $$$("code").value();
+
+$$$.ajax({
+"url":"servletTwo",
+"data":{"code":code},
+"methodType":"GET",
+"success":function(responseData){
+if(responseData=="INVALID")
 {
-var elementValue = document.getElementsByName(jsonKey)[0];
-if(jsonValue["required-state"]!=undefined)
+alert('Invalid designation code');
+}
+else
 {
-if(elementValue.checked != jsonValue["required-state"])
-{
-alert(jsonValue["errors"]["required-state"]);
-}
-}
-
-
-}
-i++;
-} //end of while for traversing keys
-
-
-if(firstInvalidField!=null) firstInvalidField.focus();
-return isValid;
-} //end of isValid
-}; //end of return
-}
-
-//TMJRock part ends here
-//TMJRock user script starts here
-function doSomething() //expected to return True/False
-{
-return $$$("someForm").isValid({
-"nm":{
-"required":true,
-"max-length":20,
-"error-pane":"nmErrorSection",
-"errors":{
-"required":"Name required",
-"max-length":"Name cannot exceed 20 characters"
+var splits = responseData.split(",");
+titleSpan.html(splits[1]);
 }
 },
-"ad":{
-"required":true,
-"error-pane":"adErrorSection",
-"errors":{
-"required":"Address required"
+"failure":function(){
+alert('Some problem 1');
 }
+});
+} //end of getDesignations()
+
+function saveEnquiry()
+{
+var firstName = $$$("firstName").value();
+var lastName = $$$("lastName").value();
+var age = $$$("age").value();
+
+var customer = {
+"firstName":firstName,
+"lastName":lastName,
+"age":age
+};
+var whatever = $$$("whatever");
+whatever.html("");
+
+$$$.ajax({
+"methodType":"POST",
+"url":"servletThree",
+"data":customer,
+"sendJSON":false,
+"success":function(responseData){
+var customer = JSON.parse(responseData);
+var a = "First name: " + customer.firstName + "<br>";
+a = a + "Last name: " + customer.lastName + "<br>";
+a = a + "Age: " + customer.age + "<br>";
+whatever.html(a);
 },
-"ct":{
-"invalid":-1,
-"error-pane":"ctErrorSection",
-"errors":{
-"invalid":"Select city"
-}
-},
-"gender":{
-"required":true,
-"error-pane":"genderErrorSection",
-"errors":{
-"required":"Select gender"
-}
-},
-"agree":{
-"required-state":true,
-"display-alert":true,
-"errors":{
-"required-state":"Select 'I Agree' checkbox"
-}
+"failure":function(){
+alert('Some problem 2');
 }
 });
 }
-
-
 </script>
 </head>
+
 <body>
-<h1>TMJRock Validations</h1>
-<form id='someForm' action='whatever' onsubmit='return doSomething()'>
-Name <input type='text' name='nm' id='nm'>
-<span id='nmErrorSection'></span><br>
-Address <textarea name='ad' id='ad'></textarea>
-<span id='adErrorSection'></span>
-<br>
-Select city
-<select id='ct' name='ct'>
-<option value='-1'>Select city</option>
-<option value='1'>Ujjain</option>
-<option value='2'>Mathura</option>
-<option value='3'>Vrindavan</option>
-<option value='4'>Yashodha</option>
-<option value='5'>Mayya</option>
-<option value='6'>Krishna</option>
+<h1> Example 3 </h2><br>
+Enter first name: <input type='text' id='firstName'><br>
+Enter last name: <input type='text' id='lastName'><br>
+Enter age: <input type='text' id='age'><br>
 
+<button type='button' onclick='saveEnquiry()'>Save</button> <br><br>
 
-</select><span id='ctErrorSection'></span>
-<br>
+<div id='whatever'></div>
 
-Gender &nbsp;&nbsp;&nbsp;&nbsp;
-Male <input type='radio' name='gender' id='ml' value='M'>
-&nbsp;&nbsp;&nbsp;&nbsp;
-Female <input type='radio' name='gender' id='fe' value='F'>
-&nbsp;&nbsp;&nbsp;&nbsp;
-<span id='genderErrorSection'></span>
-<br>
-I agree
-<input type='checkbox' name='agree' id='ag' value='Y'>
-<br><br>
-<button type='submit'>Register</button>
-</form>
+<a href='/ajax2/index.html'>Home</a>
 </body>
 </html>

@@ -12,6 +12,12 @@ element = document.getElementById(parameter);
 
 return {
 fillComboBox : function(configurations){
+
+if(this.element.nodeName!="SELECT") throw "fillComboBox can be called on a SELECT type object only";
+
+
+
+
 var designations = configurations.dataSource;
 
 var obj1;

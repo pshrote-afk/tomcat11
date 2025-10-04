@@ -22,6 +22,9 @@ public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
 try
 {
+String contentType = request.getContentType();
+if(contentType.contains("application/json"))
+{
 BufferedReader br = request.getReader();
 StringBuffer sb = new StringBuffer();
 String d;
@@ -39,6 +42,26 @@ PrintWriter pw = response.getWriter();
 response.setContentType("application/json");
 pw.print(gson.toJson(c));
 pw.flush();
+}
+else
+{
+String firstName = request.getParameter("firstName");
+String lastName = request.getParameter("lastName");
+int age = Integer.parseInt(request.getParameter("age"));
+
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("firstName",firstName);
+jsonObject.addProperty("lastName",lastName);
+jsonObject.addProperty("age",age);
+
+Gson gson = new Gson();
+String jsonString = gson.toJson(jsonObject);
+
+PrintWriter pw = response.getWriter();
+response.setContentType("application/json");
+pw.print(jsonString);
+pw.flush();
+}
 }catch(Exception e)
 {
 try

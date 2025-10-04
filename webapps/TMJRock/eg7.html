@@ -4,139 +4,355 @@
 <head>
 <title>AJAX Examples</title>
 <script>
-//TMJRock code starts
-$$$.onDocumentLoaded = function(functionAsParameter){
-document.addEventListener('DOMContentLoaded',functionAsParameter);
-}
-var selectedRow = null;
-function selectEmployee(row)
-{
-if(row==selectedRow) return;
-if(selectedRow==null)
-{
-row.style.color='white';
-row.style.background='gray';
-}
-else
-{
-selectedRow.style.color='black';
-selectedRow.style.background='white';
-row.style.color='white';
-row.style.background='gray';
-}
-selectedRow = row;
+//this will be part of TMJRock JavaScript library in the end
 
+function $$$(cid){
+let element = document.getElementById(cid);
+if(!element) throw "Invalid id: "+cid;
+return new TMJRockElement(element);
+} //end of $$$ function
+
+//done done
+$$$.model = {
+"onStartup":[],
+"accordians":[]
+};
+
+$$$.accordianHeadingClicked = function(accordianIndex,panelIndex)
+{
+if($$$.model.accordians[accordianIndex].expandedIndex!=-1) $$$.model.accordians[accordianIndex].panels[$$$.model.accordians[accordianIndex].expandedIndex].style.display='none';
+$$$.model.accordians[accordianIndex].panels[panelIndex+1].style.display = $$$.model.accordians[accordianIndex].panels[panelIndex+1].oldDisplay;
+$$$.model.accordians[accordianIndex].expandedIndex = panelIndex + 1;
 }
 
-function $$$()
-{
-}
-$$$.grid = function(elementId, configurationsJson){
-var element = document.getElementById(elementId);
-var table = whatever();
-element.appendChild(table);
+$$$.toAccordian = function(aid){
+let panels=[];
+let expandedIndex = -1;
+let accord = document.getElementById(aid);
+let children = accord.childNodes;
 
-if(configurationsJson.rowSelectionEnabled!=undefined && configurationsJson.rowSelectionEnabled==true)
+for(let x=0;x<children.length;x++)
 {
-var tableBody = table.getElementsByTagName('tbody')[0];
-var tableRows = tableBody.getElementsByTagName('tr');
-var row;
-for(var i=0;i<tableRows.length;i++)
+if(children[x].nodeName=="H3")
 {
-row = tableRows[i];
-row.onclick = function(){
-selectEmployee(this);
+panels[panels.length] = children[x];
+}
+if(children[x].nodeName=="DIV")
+{
+panels[panels.length] = children[x];
+}
+}
+if(panels.length%2!=0) throw "Headings and division malformed to create accordian";
+for(x=0;x<panels.length;x+=2)
+{
+if(panels[x].nodeName!="H3") throw "Headings and division malformed to create accordian";
+if(panels[x+1].nodeName!="DIV") throw "Headings and division malformed to create accordian";
+}
+
+function createClickHandler(accordianIndex,panelIndex)
+{
+return function(){
+$$$.accordianHeadingClicked(accordianIndex,panelIndex);
 };
 }
 
-}
+let accordianIndex = $$$.model.accordians.length;
 
-}
-
-
-//TMJRock code ends
-//foll. is TMJRock user
-function DataModel()
+for(x=0;x<panels.length;x+=2)
 {
-this.data = null;
-this.getRowCount = function(){
-if(this.data==null) return 0;
-else return this.data.length;
+panels[x].onclick = createClickHandler(accordianIndex,x);
+panels[x+1].oldDisplay = panels[x+1].style.display;
+panels[x+1].style.display = "none"
 }
-//many more functions to help grid know how to make table
-}
-var myDataModel = new DataModel();
 
-function whatever()	//creates and returns table
+$$$.model.accordians[accordianIndex] = {
+"panels":panels,
+"expandedIndex":-1
+} //end of anonymous function
+
+} //end of $$$.toAccordian
+
+$$$.onDocumentLoaded = function(func){
+if((typeof func)!="function") throw "Expected function; found " + (typeof func) + " in call to onDocumentLoaded";
+$$$.model.onStartup[$$$.model.onStartup.length] = func;
+}
+
+$$$.initFramework = function(){
+let x=0;
+while(x<$$$.model.onStartup.length)
 {
-var employees = [				//later: get employees dynamically
-{ employeeId: 1, name: "Amit", salary: 50000 },
-{ employeeId: 2, name: "Priya", salary: 60000 },
-{ employeeId: 3, name: "Rahul", salary: 55000 }
-];
-myDataModel.data = employees;
-
-
-//code to populate myDataModel with data (list of objects)
-
-var table = document.createElement('table');
-table.border = '1';
-var tableHeader = document.createElement('thead');
-var tableBody = document.createElement('tbody');
-table.appendChild(tableHeader);
-table.appendChild(tableBody);
-
-var headerRow = document.createElement('tr');
-var th;
-th = document.createElement('th');
-th.textContent = "employeeId";
-headerRow.appendChild(th);
-th = document.createElement('th');
-th.textContent = "name";
-headerRow.appendChild(th);
-th = document.createElement('th');
-th.textContent = "salary";
-headerRow.appendChild(th);
-tableHeader.appendChild(headerRow);
-
-var j;
-var keys;
-var key;
-for(var i=0;i < myDataModel.data.length;i++)
-{
-rowData = myDataModel.data[i];
-keys = Object.keys(rowData);	// ["employeeId","name","salary"]
-var tr = document.createElement('tr');
-tr.style.cursor='pointer';
-var td;
-j=0;
-while(j < keys.length)
-{
-key = keys[j];
-td = document.createElement('td');
-td.textContent = rowData[key];
-tr.appendChild(td);
-j++;
+$$$.model.onStartup[x]();
+x++;
 }
-tableBody.appendChild(tr);
-}
-return table;
 }
 
-function doSomething()
-{
-$$$.grid("someId",{
-"model" : myDataModel,
-"pagination":true,
-"pageSize":10,
-"rowSelectionEnabled":true
+window.addEventListener('load',function(){
+$$$.initFramework();
 });
+//done done ends
+
+function TMJRockElement(element)
+{
+this.element = element;
+
+this.fillComboBox = function(configurations){
+//to do: apply validation for fields recevied. Lect 66.
+
+var designations = configurations.dataSource;
+
+var obj1;
+if(configurations.firstOption!=null)
+{
+obj1 = document.createElement("option");
+obj1.value = configurations.firstOption.value;
+obj1.text = configurations.firstOption.text;
+element.appendChild(obj1);
 }
-$$$.onDocumentLoaded(doSomething);
+for(var i=0;i<designations.length;i++)
+{
+obj1 = document.createElement("option");
+obj1.value = designations[i][configurations.value]; // In Java we would've written - designations[i].(configurations.value);
+obj1.text = designations[i][configurations.text];
+element.appendChild(obj1);
+}
+}; //end of TMJRockElement fillComboBox().
+
+this.html = function(content)
+{
+if(typeof this.element.innerHTML=="string")
+{
+if((typeof content)=="string")
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+return null;
+}
+
+this.value = function(content)
+{
+if(typeof this.element.value)
+{
+if((typeof content) == "string")
+{
+this.element.value = content;
+}
+return this.element.value;
+}
+return null;
+}
+
+
+} //end of TMJRockElement
+
+
+$$$.ajax = function(jsonObject)
+{
+if(!jsonObject["url"]) throw "url property is missing in call to ajax";
+let url = jsonObject["url"];
+if((typeof url)!="string") throw "url property should be of string type in call to ajax";
+
+let methodType = "GET"
+if(jsonObject["methodType"])
+{
+methodType = jsonObject["methodType"];
+if((typeof methodType)!="string") throw "methodType property should be of string type in call to ajax";
+methodType = methodType.toUpperCase();
+if(["GET","POST"].includes(methodType)==false) throw "methodType should be GET/POST in call to ajax";
+}
+
+let onSuccess=null;
+if(jsonObject["success"])
+{
+onSuccess = jsonObject["success"];
+if((typeof onSuccess)!="function") throw "success property should be a function in call to ajax";
+}
+
+let onFailure=null;
+if(jsonObject["failure"])
+{
+onFailure = jsonObject["failure"];
+if((typeof onFailure)!="function") throw "failure property should be a function in call to ajax";
+}
+
+if(methodType=="GET")
+{
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+
+if(jsonObject["data"])
+{
+let jsonData = jsonObject["data"];
+let queryString = "";
+let qsName;
+let qsValue;
+let xx=0;
+for(k in jsonData)
+{
+if(xx==0) queryString = "?";	//Will run first time
+if(xx>0) queryString += "&";	//Won't run first time. Then will run everytime.
+xx++;
+qsName = encodeURI(k);
+qsValue = encodeURI(jsonData[k]);
+queryString = queryString + qsName + "=" + qsValue;
+}
+url+=queryString;
+}
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+} //"GET" part ends here
+
+if(methodType=="POST")
+{
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
+
+
+let jsonData = {};
+if(jsonObject["data"])
+{
+jsonData = jsonObject["data"];
+}
+
+if((typeof jsonObject["sendJSON"])!=="boolean") throw "sendJSON property should be of boolean type in call to ajax";
+
+if(jsonObject["sendJSON"]==true)
+{
+xmlHttpRequest.open("POST",url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(jsonData));
+}
+else if(jsonObject["sendJSON"]==false || jsonObject["sendJSON"]==undefined)
+{
+//make queryString
+var queryString = "";
+var qsName;
+var qsValue;
+var xx=0;
+for(k in jsonData)
+{
+if(xx>0) queryString+="&";
+xx++;
+qsName = encodeURI(k);
+qsValue = encodeURI(jsonData[k]);
+queryString = queryString + qsName + "=" + qsValue;
+}
+}
+else
+{
+throw "some problem in sendJSON property";
+}
+
+xmlHttpRequest.open("POST",url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+xmlHttpRequest.send(queryString);
+}
+
+}//end of $$$.ajax function
+
+
+
+//TMJRock ends
+//TMJRock user part starts
+
+$$$.onDocumentLoaded(function(){
+$$$.toAccordian("mymy");
+$$$.toAccordian("gogo");
+});
+
 </script>
 </head>
 <body>
-<div id='someId'>
+
+<div id="mymy">
+<h3>Heading 1</h3>
+<div>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
 </div>
+
+<h3>Heading 2</h3>
+<div>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+</div>
+
+<h3>Heading 3</h3>
+<div>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+</div>
+
+</div> <!--end of 'mymy'-->
+
+<div id="gogo">
+<h3>Heading 4</h3>
+<div>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+</div>
+
+<h3>Heading 5</h3>
+<div>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+</div>
+
+<h3>Heading 6</h3>
+<div>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+</div>
+
+</div> <!--end of 'gogo'-->
+
+
 </body>
 </html>
