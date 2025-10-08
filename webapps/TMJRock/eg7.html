@@ -12,7 +12,6 @@ if(!element) throw "Invalid id: "+cid;
 return new TMJRockElement(element);
 } //end of $$$ function
 
-//done done
 $$$.model = {
 "onStartup":[],
 "accordians":[]
@@ -25,13 +24,12 @@ $$$.model.accordians[accordianIndex].panels[panelIndex+1].style.display = $$$.mo
 $$$.model.accordians[accordianIndex].expandedIndex = panelIndex + 1;
 }
 
-$$$.toAccordian = function(aid){
+$$$.toAccordian = function(accord){
 let panels=[];
 let expandedIndex = -1;
-let accord = document.getElementById(aid);
 let children = accord.childNodes;
 
-for(let x=0;x<children.length;x++)
+for(let x=0;x<children.length;x++)	// loop also throws children of type '#text'
 {
 if(children[x].nodeName=="H3")
 {
@@ -78,8 +76,24 @@ $$$.model.onStartup[$$$.model.onStartup.length] = func;
 }
 
 $$$.initFramework = function(){
+let allTags = document.getElementsByTagName("*");
+let t=null;
+let i=0;
+let a=null;
+for(i=0;i<allTags.length;i++)
+{
+t=allTags[i];
+if(t.hasAttribute("accordian"))
+{
+a=t.getAttribute("accordian");
+if(a=="true")
+{
+$$$.toAccordian(t);
+}
+}
+}
 let x=0;
-while(x<$$$.model.onStartup.length)
+while(x<$$$.model.onStartup.length)   // onStartup is empty after we introduced accordian="true" concept
 {
 $$$.model.onStartup[x]();
 x++;
@@ -89,7 +103,7 @@ x++;
 window.addEventListener('load',function(){
 $$$.initFramework();
 });
-//done done ends
+
 
 function TMJRockElement(element)
 {
@@ -282,16 +296,12 @@ xmlHttpRequest.send(queryString);
 //TMJRock ends
 //TMJRock user part starts
 
-$$$.onDocumentLoaded(function(){
-$$$.toAccordian("mymy");
-$$$.toAccordian("gogo");
-});
 
 </script>
 </head>
 <body>
 
-<div id="mymy">
+<div accordian="true">
 <h3>Heading 1</h3>
 <div>
 Content 1 Content 1 Content 1 Content 1 Content 1<br>
@@ -322,7 +332,7 @@ Content 3 Content 3 Content 3 Content 3 Content 3<br>
 
 </div> <!--end of 'mymy'-->
 
-<div id="gogo">
+<div accordian="true">
 <h3>Heading 4</h3>
 <div>
 Content 1 Content 1 Content 1 Content 1 Content 1<br>
