@@ -13,6 +13,7 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
+var designations = JSON.parse(responseData);
 var table = document.getElementById('designationViewTable');
 var tbody = document.getElementsByTagName('tbody')[0];
 var templateRow = tbody.getElementsByTagName('tr')[0];
@@ -23,17 +24,15 @@ var k=0;
 var dynamicRow;
 var dynamicRowCells;
 var placeHolderFor;
-var splits = responseData.split(',');
-for(var i = 0;i<splits.length;i+=2)
+for(var i = 0;i<designations.length;i++)
 {
 dynamicRow = templateRow.cloneNode(true);
 dynamicRowCells = dynamicRow.getElementsByTagName('td');
 dynamicRowCells[0].textContent = k+1 + ".";
-dynamicRowCells[1].textContent = splits[i+1];
-dynamicRowCells[2].querySelector('a').href = '/stylethree/DesignationEditForm.jsp?code=' + splits[i];
-dynamicRowCells[3].querySelector('a').href = '/stylethree/ConfirmDeleteDesignation.jsp?code=' + splits[i];
+dynamicRowCells[1].textContent = designations[i].title;
+dynamicRowCells[2].querySelector('a').href = '/stylethree/DesignationEditForm.jsp?code=' + designations[i].code;
+dynamicRowCells[3].querySelector('a').href = '/stylethree/ConfirmDeleteDesignation.jsp?code=' + designations[i].code;
 tbody.appendChild(dynamicRow);
-
 k++;
 }
 

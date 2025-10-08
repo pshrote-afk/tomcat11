@@ -38,8 +38,8 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(',');
-if(splits[0]=='true')	//means successfully added
+responseData = JSON.parse(responseData);
+if(responseData.success==true)	//means successfully added
 {
 var titleErrorSection = document.getElementById('titleErrorSection');
 titleErrorSection.innerHTML = '';
@@ -51,12 +51,11 @@ message.innerText = 'Designation added. Add more?'
 addButton.innerText = 'Yes';
 addButton.onclick = addAnotherDesignation;
 cancelButton.innerText = 'No';
-
 }
-else if(splits[0]=='false') //means not added. Show error.
+else if(responseData.success==false) //means not added. Show error.
 {
 var titleErrorSection = document.getElementById('titleErrorSection');
-titleErrorSection.innerHTML = splits[1];
+titleErrorSection.innerHTML = responseData.errorMessage;
 }
 else alert('some problem');
 }

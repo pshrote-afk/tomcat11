@@ -107,7 +107,17 @@ return;	// because all 4 of these should be valid, and thus this if block should
 }
 //control reaches here means all 4 fields are valid. Proceed to actually add.
 
-var dataToSend = "name=" + encodeURI(name) + "&designationCode=" + encodeURI(designationCode) + "&dateOfBirth=" + encodeURI(dateOfBirth) + "&gender=" + encodeURI(gender) + "&isIndian=" + encodeURI(isIndian) + "&basicSalary=" + encodeURI(basicSalary) + "&panNumber=" + encodeURI(panNumber) + "&aadharCardNumber=" + encodeURI(aadharCardNumber);
+var employee = {
+"name":name,
+"designationCode":designationCode,
+"dateOfBirth":dateOfBirth,
+"gender":gender,
+"isIndian":isIndian,
+"basicSalary":basicSalary,
+"panNumber":panNumber,
+"aadharCardNumber":aadharCardNumber
+};
+
 var xmlHttpRequest = new XMLHttpRequest();
 xmlHttpRequest.onreadystatechange = function() {
 if(this.readyState==4)
@@ -115,13 +125,8 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
-if(splits[0]=='false')
-{
-//daoException in errorSection
-errorSection.innerText = splits[1];
-}
-else if(splits[0]=='true')
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
 {
 var employeeAddForm = document.getElementById('employeeAddForm');
 employeeAddFormTable.style.display='none';	
@@ -133,6 +138,11 @@ addButton.innerText = 'Yes';
 addButton.onclick = addAnotherEmployee;
 cancelButton.innerText = 'No';
 }
+else if(responseData.success==false)
+{
+//daoException in errorSection
+errorSection.innerText = responseData.errorMessage;
+}
 else
 {
 alert('some problem');
@@ -141,8 +151,8 @@ alert('some problem');
 }
 };
 xmlHttpRequest.open("POST","employees/add",true);
-xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-xmlHttpRequest.send(dataToSend);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(employee));
 }
 
 function populateDesignations()
@@ -155,14 +165,14 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
+var designations = JSON.parse(responseData);
 var designationCodeSelect = document.getElementById('designationCode');
 var dynamicOption;
-for(var i=0;i<splits.length;i+=2)
+for(var i=0;i<designations.length;i++)
 {
 dynamicOption = document.createElement('option');
-dynamicOption.value = splits[i];
-dynamicOption.text = splits[i+1];
+dynamicOption.value = designations[i].code;
+dynamicOption.text = designations[i].title;
 designationCodeSelect.appendChild(dynamicOption);
 }
 }

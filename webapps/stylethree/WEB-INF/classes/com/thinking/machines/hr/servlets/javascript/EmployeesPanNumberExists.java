@@ -3,6 +3,7 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
+import com.google.gson.*;
 public class EmployeesPanNumberExists extends HttpServlet
 {
 public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -17,18 +18,39 @@ response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 public void doGet(HttpServletRequest request,HttpServletResponse response)
 {
 PrintWriter pw = null;
-response.setContentType("plain/text");
+response.setContentType("application/json");
 try
 {
 pw = response.getWriter();
 String panNumber = request.getParameter("panNumber");
 EmployeeDAO employeeDAO = new EmployeeDAO();
 boolean exists = employeeDAO.panNumberExists(panNumber);
-if(exists) pw.print("true");
-else pw.print("false");
+
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+
+if(exists) 
+{
+jsonObject.addProperty("success",true);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
+}
+else
+{
+jsonObject.addProperty("success",false);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
+}
 }catch(DAOException daoException)
 {
-pw.print("true");	//SQLException could come. So we say it exists
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }
 catch(Exception e)
 {

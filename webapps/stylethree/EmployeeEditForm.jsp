@@ -15,7 +15,8 @@ if(this.readyState==4)
 {
 if(this.status==200)
 {
-return this.responseText;
+success = JSON.parse(this.responseText).success;
+return success;
 }
 }
 };
@@ -31,7 +32,8 @@ if(this.readyState==4)
 {
 if(this.status==200)
 {
-return this.responseText;
+success = JSON.parse(this.responseText).success;
+return success;
 }
 }
 };
@@ -47,7 +49,8 @@ if(this.readyState==4)
 {
 if(this.status==200)
 {
-return this.responseText;
+success = JSON.parse(this.responseText).success;
+return success;
 }
 }
 };
@@ -84,6 +87,18 @@ var basicSalary = document.getElementById('basicSalary').value;
 var panNumber = document.getElementById('panNumber').value;
 var aadharCardNumber = document.getElementById('aadharCardNumber').value;
 
+var employee = {
+"employeeId":employeeId,
+"name":name,
+"designationCode":designationCode,
+"dateOfBirth":dateOfBirth,
+"gender":gender,
+"isIndian":isIndian,
+"basicSalary":basicSalary,
+"panNumber":panNumber,
+"aadharCardNumber":aadharCardNumber
+};
+
 var designationCodeExistence = designationCodeExists(designationCode);
 
 var basicSalaryLengthExceeds;
@@ -105,7 +120,6 @@ return;	// because all 4 of these should be valid, and thus this if block should
 }
 //control reaches here means all 4 fields are valid. Proceed to actually edit.
 
-var dataToSend = "employeeId=" + encodeURI(employeeId) + "&name=" + encodeURI(name) + "&designationCode=" + encodeURI(designationCode) + "&dateOfBirth=" + encodeURI(dateOfBirth) + "&gender=" + encodeURI(gender) + "&isIndian=" + encodeURI(isIndian) + "&basicSalary=" + encodeURI(basicSalary) + "&panNumber=" + encodeURI(panNumber) + "&aadharCardNumber=" + encodeURI(aadharCardNumber);
 var xmlHttpRequest = new XMLHttpRequest();
 xmlHttpRequest.onreadystatechange = function() {
 if(this.readyState==4)
@@ -113,13 +127,8 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
-if(splits[0]=='false')
-{
-//daoException in errorSection
-errorSection.innerText = splits[1];
-}
-else if(splits[0]=='true')
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
 {
 var employeeEditForm = document.getElementById('employeeEditForm');
 employeeEditFormTable.style.display='none';	
@@ -131,6 +140,11 @@ editButton.innerText = 'OK';
 editButton.onclick = goToEmployeesView;
 cancelButton.style.display = 'none';
 }
+else if(responseData.success==false)
+{
+//daoException in errorSection
+errorSection.innerText = responseData.errorMessage;
+}
 else
 {
 alert('some problem');
@@ -139,8 +153,8 @@ alert('some problem');
 }
 };
 xmlHttpRequest.open("POST","employees/update",true);
-xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-xmlHttpRequest.send(dataToSend);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(employee));
 }
 
 function editEmployee()
@@ -153,23 +167,23 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(',');
-if(splits[0]=='false') //means user manually typed incorrect code in search bar. Redirect to Employees.jsp page w/o further encouragement
+responseData = JSON.parse(responseData);
+
+if(responseData.success==true)
+{
+document.getElementById('employeeId').value = responseData.data.employeeId;	//set hidden form field
+document.getElementById('name').value = responseData.data.name;
+document.getElementById('designationCode').value = responseData.data.designationCode;
+document.getElementById('dateOfBirth').value = responseData.data.dateOfBirth;
+document.getElementById('employeeEditForm').gender.value = (responseData.data.gender == 'M')?'M':'F';
+document.getElementById('isIndian').checked = (responseData.data.isIndian==true);		//returns true/false
+document.getElementById('basicSalary').value = responseData.data.basicSalary;
+document.getElementById('panNumber').value = responseData.data.panNumber;
+document.getElementById('aadharCardNumber').value = responseData.data.aadharCardNumber;
+}
+else if(responseData.success==false) //means user manually typed incorrect code in search bar. Redirect to Employees.jsp page w/o further encouragement
 {
 window.location.href = 'Employees.jsp';
-}
-else if(splits[0]=='true')
-{
-document.getElementById('employeeId').value = splits[1];	//set hidden form field
-document.getElementById('name').value = splits[2];
-document.getElementById('designationCode').value = splits[3];
-document.getElementById('dateOfBirth').value = splits[5];
-document.getElementById('employeeEditForm').gender.value = (splits[6] == 'M')?'M':'F'
-document.getElementById('isIndian').checked = (splits[7]=='true');			//returns true/false
-document.getElementById('basicSalary').value = splits[8];
-document.getElementById('panNumber').value = splits[9];
-document.getElementById('aadharCardNumber').value = splits[10];
-
 }
 else 
 {
@@ -192,14 +206,15 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
+var designations = JSON.parse(responseData);
+
 var designationCodeSelect = document.getElementById('designationCode');
 var dynamicOption;
-for(var i=0;i<splits.length;i+=2)
+for(var i=0;i<designations.length;i++)
 {
 dynamicOption = document.createElement('option');
-dynamicOption.value = splits[i];
-dynamicOption.text = splits[i+1];
+dynamicOption.value = designations[i].code;
+dynamicOption.text = designations[i].title;
 designationCodeSelect.appendChild(dynamicOption);
 }
 }

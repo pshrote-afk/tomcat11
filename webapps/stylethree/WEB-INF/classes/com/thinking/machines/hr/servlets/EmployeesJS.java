@@ -43,6 +43,7 @@ pw.println("employee.basicSalary="+employeeBean.getBasicSalary()+";");
 pw.println("employee.panNumber=\""+employeeBean.getPanNumber()+"\";");
 pw.println("employee.aadharCardNumber=\""+employeeBean.getAadharCardNumber()+"\";");
 pw.println("employees["+k+"]=employee;");
+pw.println(""); 	//to improve visualization by adding extra space
 k++;
 }
 }catch(Exception exception)

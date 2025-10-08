@@ -13,14 +13,16 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
+alert(responseData);
+var designations = JSON.parse(responseData);
+alert(designations);
 var designationsComboBox = document.getElementById("designations");
 var obj1;
-for(var i=0;i<splits.length;i=i+2)
+for(var i=0;i<designations.length;i++)
 {
 obj1 = document.createElement("option");
-obj1.value = splits[i];
-obj1.text = splits[i+1];
+obj1.value = designations[i].code;
+obj1.text = designations[i].title;
 designationsComboBox.appendChild(obj1);
 }
 }
@@ -41,6 +43,6 @@ Designations:
 <select id='designations'>
 
 </select><br>
-<a href='/something/index.html'>Home</a>
+<a href='/ajax2/index.html'>Home</a>
 </body>
 </html>

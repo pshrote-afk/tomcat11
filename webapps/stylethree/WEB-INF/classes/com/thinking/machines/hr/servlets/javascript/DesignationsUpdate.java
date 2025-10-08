@@ -3,6 +3,7 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
+import com.google.gson.*;
 public class DesignationsUpdate extends HttpServlet
 {
 public void doGet(HttpServletRequest request,HttpServletResponse response)
@@ -19,22 +20,42 @@ response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
 PrintWriter pw = null; 
-response.setContentType("text/plain");
+response.setContentType("application/json");
 try
 {
+Gson gson = new Gson();
 pw = response.getWriter();
-int code = Integer.parseInt(request.getParameter("code"));
-String title = request.getParameter("title");
+
+BufferedReader br = request.getReader();
+StringBuffer sb = new StringBuffer();
+String x;
+while(true)
+{
+x = br.readLine();
+if(x==null) break;
+sb.append(x);
+}
+String rawData = sb.toString();
+
 DesignationDAO designationDAO = new DesignationDAO();
-DesignationDTO designationDTO = new DesignationDTO();
-designationDTO.setCode(code);
-designationDTO.setTitle(title);
+DesignationDTO designationDTO;
+designationDTO = gson.fromJson(rawData,DesignationDTO.class);
 designationDAO.update(designationDTO);
-pw.print("true");
-pw.flush();	//to remove extra \n if attached by default
+
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();	
 }catch(DAOException daoException)
 {
-pw.print("false" + "," + daoException.getMessage());
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",daoException.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 return;
 }
 catch(Exception e)

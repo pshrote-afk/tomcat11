@@ -9,13 +9,15 @@ function saveEnquiry()
 var firstName = document.getElementById("firstName").value;
 var lastName = document.getElementById("lastName").value;
 var age = document.getElementById("age").value;
-var dataToSend = "firstName=" + encodeURI(firstName);
-var dataToSend = dataToSend + "&lastName=" + encodeURI(lastName);
-var dataToSend = dataToSend + "&age=" + encodeURI(age);
+
+var customer = {
+"firstName":firstName,
+"lastName":lastName,
+"age":age
+};
 
 var whatever = document.getElementById("whatever");
 whatever.innerHTML="";
-alert(dataToSend);
 
 var xmlHttpRequest = new XMLHttpRequest();
 xmlHttpRequest.onreadystatechange = function() {
@@ -23,8 +25,11 @@ if(this.readyState==4)
 {
 if(this.status==200)
 {
-var responseData = this.responseText;
-whatever.innerHTML = responseData;
+var customer = JSON.parse(this.responseText);
+var a = "First name: " + customer.firstName + "<br>";
+a = a + "Last name: " + customer.lastName + "<br>";
+a = a + "Age: " + customer.age;
+whatever.innerHTML = a;
 }
 else
 {
@@ -33,8 +38,8 @@ alert('some prob');
 }
 }
 xmlHttpRequest.open('POST','servletThree',true);
-xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-xmlHttpRequest.send(dataToSend);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(customer));
 }
 </script>
 </head>
@@ -49,6 +54,6 @@ Enter age: <input type='text' id='age'><br>
 
 <div id='whatever'></div>
 
-<a href='/something/index.html'>Home</a>
+<a href='/ajax2/index.html'>Home</a>
 </body>
 </html>

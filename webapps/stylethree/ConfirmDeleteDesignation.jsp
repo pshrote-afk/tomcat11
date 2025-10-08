@@ -10,7 +10,7 @@ cancelDeletion();
 function deleteDesignation()
 {
 var code = document.getElementById('code').value;
-var dataToSend = 'code=' + encodeURI(code);
+
 var xmlHttpRequest = new XMLHttpRequest();
 xmlHttpRequest.onreadystatechange = function() {
 if(this.readyState==4)
@@ -18,8 +18,8 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
-if(splits[0]=='true')
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
 {
 var titleErrorSection = document.getElementById('titleErrorSection');
 titleErrorSection.innerHTML = '';
@@ -32,10 +32,10 @@ deleteButton.innerText = 'OK';
 deleteButton.onclick = goToDesignationsView;
 cancelButton.style.display = 'none';
 }
-else if(splits[0]=='false')
+else if(responseData.success==false)
 {
 var titleErrorSection = document.getElementById('titleErrorSection');
-titleErrorSection.innerHTML = splits[1];
+titleErrorSection.innerHTML = responseData.errorMessage;
 return;
 }
 else
@@ -45,9 +45,9 @@ alert('some problem');
 }
 }
 };
-xmlHttpRequest.open('POST','designations/delete',true);
-xmlHttpRequest.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-xmlHttpRequest.send(dataToSend);
+var requestURL = 'designations/delete?code='+ encodeURI(code);
+xmlHttpRequest.open('POST',requestURL,true);
+xmlHttpRequest.send();
 }
 
 function confirmDeleteDesignation()
@@ -61,15 +61,16 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(',');
-if(splits[0]=='false') //means user manually typed incorrect code in search bar. Redirect to Designations.jsp page w/o further encouragement
-{
-window.location.href = 'Designations.jsp';
-}
-else if(splits[0]=='true')
+responseData = JSON.parse(responseData);
+
+if(responseData.success==true)
 {
 var title = document.getElementById('title');
-title.value = splits[2];
+title.value = responseData.data.title
+}
+else if(responseData.success==false) //means user manually typed incorrect code in search bar. Redirect to Designations.jsp page w/o further encouragement
+{
+window.location.href = 'Designations.jsp';
 }
 else 
 {

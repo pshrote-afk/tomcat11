@@ -3,6 +3,7 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.*;
+import com.google.gson.*;
 public class DesignationsDelete extends HttpServlet
 {
 public void doGet(HttpServletRequest request,HttpServletResponse response)
@@ -19,19 +20,31 @@ response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 public void doPost(HttpServletRequest request,HttpServletResponse response)
 {
 PrintWriter pw = null; 
-response.setContentType("text/plain");
+response.setContentType("application/json");
 try
 {
 pw = response.getWriter();
 int code = Integer.parseInt(request.getParameter("code"));
 DesignationDAO designationDAO = new DesignationDAO();
 designationDAO.delete(code);
-pw.print("true");
-pw.flush();	//to remove extra \n if attached by default
+
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();	
 }catch(DAOException daoException)
 {
 System.out.println(daoException.getMessage());
-pw.print("false" + "," + daoException.getMessage());
+
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+jsonObject.addProperty("data",daoException.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();	
 return;
 }
 catch(Exception e)

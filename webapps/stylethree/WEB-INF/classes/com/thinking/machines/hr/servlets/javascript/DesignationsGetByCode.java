@@ -3,6 +3,7 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
+import com.google.gson.*;
 public class DesignationsGetByCode extends HttpServlet
 {
 public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -21,22 +22,39 @@ try
 {
 pw = response.getWriter();
 int code = Integer.parseInt(request.getParameter("code"));
-response.setContentType("text/plain");
+response.setContentType("application/json");
 DesignationDAO designationDAO = new DesignationDAO();
 try
 {
 DesignationDTO designationDTO = designationDAO.getByCode(code);
-pw.print("true" + ",");
-pw.print(designationDTO.getCode()+","+designationDTO.getTitle());
+
+Gson gson = new Gson();
+
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+jsonObject.add("data",gson.toJsonTree(designationDTO));
+
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
 
 }catch(DAOException daoException)
 {
-pw.print("false" + "," + daoException.getMessage());
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",daoException.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
 return;
 }
 }catch(Exception exception)
 {
-pw.print("false" + "," + exception.getMessage());
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",exception.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
 }
 }//end of doGet
 }//end of class

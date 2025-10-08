@@ -20,13 +20,8 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
-if(splits[0]=='false')
-{
-//daoException in errorSection
-errorSection.innerText = splits[1];
-}
-else if(splits[0]=='true')
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
 {
 var employeeDeleteForm = document.getElementById('employeeDeleteForm');
 employeeDeleteFormTable.style.display='none';	
@@ -37,6 +32,11 @@ message.innerText = 'Employee deleted successfully.'
 deleteButton.innerText = 'OK';
 deleteButton.onclick = goToEmployeesView;
 cancelButton.style.display = 'none';
+}
+else if(responseData.success==false)
+{
+//daoException in errorSection
+errorSection.innerText = responseData.errorMessage;
 }
 else
 {
@@ -60,22 +60,22 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(',');
-if(splits[0]=='false') //means user manually typed incorrect code in search bar. Redirect to Employees.jsp page w/o further encouragement
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
+{
+document.getElementById('employeeId').value = responseData.data.employeeId;	//set hidden form field
+document.getElementById('name').innerText = responseData.data.name;
+document.getElementById('designationCode').innerText = responseData.data.title;	//splits[4] contains designation 'title'. splits[3] contains designation 'code'
+document.getElementById('dateOfBirth').innerText = responseData.data.dateOfBirth;
+document.getElementById('gender').innerText = (responseData.data.gender == 'M')?'Male':'Female'
+document.getElementById('isIndian').innerText = (responseData.data.isIndian==true)?'Indian':'Not Indian';			//returns true/false
+document.getElementById('basicSalary').innerText = responseData.data.basicSalary;
+document.getElementById('panNumber').innerText = responseData.data.panNumber;
+document.getElementById('aadharCardNumber').innerText = responseData.data.aadharCardNumber;
+}
+else if(responseData.success==false) //means user manually typed incorrect code in search bar. Redirect to Employees.jsp page w/o further encouragement
 {
 window.location.href = 'Employees.jsp';
-}
-else if(splits[0]=='true')
-{
-document.getElementById('employeeId').value = splits[1];	//set hidden form field
-document.getElementById('name').innerText = splits[2];
-document.getElementById('designationCode').innerText = splits[4];	//splits[4] contains designation 'title'. splits[3] contains designation 'code'
-document.getElementById('dateOfBirth').innerText = splits[5];
-document.getElementById('gender').innerText = (splits[6] == 'M')?'Male':'Female'
-document.getElementById('isIndian').innerText = (splits[7]=='true')?'Indian':'Not Indian';			//returns true/false
-document.getElementById('basicSalary').innerText = splits[8];
-document.getElementById('panNumber').innerText = splits[9];
-document.getElementById('aadharCardNumber').innerText = splits[10];
 }
 else 
 {

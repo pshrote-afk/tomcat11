@@ -3,8 +3,9 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
-import java.text.*;
-import java.math.*;
+//import java.text.*;
+//import java.math.*;
+import com.google.gson.*;
 public class EmployeesAdd extends HttpServlet
 {
 public void doGet(HttpServletRequest request,HttpServletResponse response)
@@ -30,13 +31,15 @@ return;
 }
 }
 PrintWriter pw = null;
-SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 try
 {
+Gson gson = new Gson();
 pw = response.getWriter();
-response.setContentType("text/plain");
+response.setContentType("application/json");
 //extract data from request 
 
+/*
 String name = request.getParameter("name");
 int designationCode = Integer.parseInt(request.getParameter("designationCode"));
 java.util.Date dateOfBirth = simpleDateFormat.parse(request.getParameter("dateOfBirth"));
@@ -46,9 +49,6 @@ String basicSalary = request.getParameter("basicSalary");
 String panNumber = request.getParameter("panNumber");
 String aadharCardNumber = request.getParameter("aadharCardNumber");
 
-EmployeeDAO employeeDAO = new EmployeeDAO();
-EmployeeDTO employeeDTO = new EmployeeDTO();
-
 employeeDTO.setName(name);
 employeeDTO.setDesignationCode(designationCode);
 employeeDTO.setDateOfBirth(dateOfBirth);
@@ -57,13 +57,39 @@ employeeDTO.setIsIndian(isIndian);
 employeeDTO.setBasicSalary(new BigDecimal(basicSalary));
 employeeDTO.setPANNumber(panNumber);
 employeeDTO.setAadharCardNumber(aadharCardNumber);
+
+*/
+
+BufferedReader bufferedReader = request.getReader();
+StringBuffer stringBuffer = new StringBuffer();
+String x;
+while(true)
+{
+x = bufferedReader.readLine();
+if(x==null) break;
+stringBuffer.append(x);
+}
+String rawData = stringBuffer.toString();
+EmployeeDAO employeeDAO = new EmployeeDAO();
+EmployeeDTO employeeDTO;
+employeeDTO = gson.fromJson(rawData,EmployeeDTO.class);
 try
 {
 employeeDAO.add(employeeDTO);
-pw.print("true");
+
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }catch(DAOException daoException)
 {
-pw.print("false"+","+daoException.getMessage());
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",daoException.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }
 }catch(Exception exception)
 {

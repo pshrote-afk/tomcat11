@@ -3,7 +3,7 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
-import java.text.*;
+import com.google.gson.*;
 public class EmployeesGetByEmployeeId extends HttpServlet
 {
 public void doPost(HttpServletRequest request,HttpServletResponse response)
@@ -22,31 +22,43 @@ try
 {
 pw = response.getWriter();
 String employeeId = request.getParameter("employeeId");
-response.setContentType("text/plain");
+response.setContentType("application/json");
 EmployeeDAO employeeDAO = new EmployeeDAO();
 try
 {
-SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 EmployeeDTO employeeDTO = employeeDAO.getByEmployeeId(employeeId);
-pw.print("true" + ",");
-pw.print(employeeDTO.getEmployeeId()+",");
-pw.print(employeeDTO.getName()+",");
-pw.print(employeeDTO.getDesignationCode()+",");
-pw.print(employeeDTO.getTitle()+",");
-pw.print(simpleDateFormat.format(employeeDTO.getDateOfBirth())+",");
-pw.print(employeeDTO.getGender()+",");
-pw.print(employeeDTO.getIsIndian()+",");
-pw.print(employeeDTO.getBasicSalary().toPlainString()+",");
-pw.print(employeeDTO.getPANNumber()+",");
-pw.print(employeeDTO.getAadharCardNumber()+",");
+
+GsonBuilder gsonBuilder = new GsonBuilder();	//purpose: to customize Gson
+gsonBuilder.setDateFormat("yyyy-MM-dd");	// instead of SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+Gson gson = gsonBuilder.create(); 	//returns instance of customized Gson class
+
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+jsonObject.add("data",gson.toJsonTree(employeeDTO));
+
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }catch(DAOException daoException)
 {
-pw.print("false" + "," + daoException.getMessage());
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",daoException.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 return;
 }
 }catch(Exception exception)
 {
-pw.print("false" + "," + exception.getMessage());
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",exception.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }
 }//end of doGet
 }//end of class

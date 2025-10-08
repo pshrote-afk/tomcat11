@@ -3,6 +3,7 @@ import com.thinking.machines.hr.dl.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import java.io.*;
+import com.google.gson.*;
 public class EmployeesDelete extends HttpServlet
 {
 public void doGet(HttpServletRequest request,HttpServletResponse response)
@@ -31,7 +32,7 @@ PrintWriter pw = null;
 try
 {
 pw = response.getWriter();
-response.setContentType("text/plain");
+response.setContentType("application/json");
 //extract data from request 
 
 String employeeId = request.getParameter("employeeId");
@@ -39,10 +40,22 @@ EmployeeDAO employeeDAO = new EmployeeDAO();
 try
 {
 employeeDAO.deleteByEmployeeId(employeeId);
-pw.print("true");
+
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",true);
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }catch(DAOException daoException)
 {
-pw.print("false"+","+daoException.getMessage());
+Gson gson = new Gson();
+JsonObject jsonObject = new JsonObject();
+jsonObject.addProperty("success",false);
+jsonObject.addProperty("errorMessage",daoException.getMessage());
+String jsonString = gson.toJson(jsonObject);
+pw.print(jsonString);
+pw.flush();
 }
 }catch(Exception exception)
 {

@@ -11,8 +11,12 @@ function updateDesignation()
 {
 var code = document.getElementById('code').value;
 var title = document.getElementById('title').value;
-var dataToSend = 'code=' + encodeURI(code);
-dataToSend = dataToSend + '&title=' + title;
+
+var designation = {
+"code":code,
+"title":title
+};
+
 var xmlHttpRequest = new XMLHttpRequest();
 xmlHttpRequest.onreadystatechange = function() {
 if(this.readyState==4)
@@ -20,8 +24,8 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(",");
-if(splits[0]=='true')
+responseData = JSON.parse(responseData);
+if(responseData.success==true)
 {
 var titleErrorSection = document.getElementById('titleErrorSection');
 titleErrorSection.innerHTML = '';
@@ -34,24 +38,22 @@ editButton.innerText = 'OK';
 editButton.onclick = goToDesignationsView;
 cancelButton.style.display = 'none';
 }
-else if(splits[0]=='false')
+else if(responseData.success==false)
 {
 var titleErrorSection = document.getElementById('titleErrorSection');
-titleErrorSection.innerHTML = splits[1];
+titleErrorSection.innerHTML = responseData.errorMessage;
 return;
 }
 else
 {
 alert('some problem');
 }
-
-
 }
 }
 };
 xmlHttpRequest.open('POST','designations/update',true);
-xmlHttpRequest.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-xmlHttpRequest.send(dataToSend);
+xmlHttpRequest.setRequestHeader('Content-Type','application/json');
+xmlHttpRequest.send(JSON.stringify(designation));
 }
 
 function editDesignation()
@@ -65,15 +67,15 @@ if(this.readyState==4)
 if(this.status==200)
 {
 var responseData = this.responseText;
-var splits = responseData.split(',');
-if(splits[0]=='false') //means user manually typed incorrect code in search bar. Redirect to Designations.jsp page w/o further encouragement
+responseData = JSON.parse(responseData);
+if(responseData.success==false) //means user manually typed incorrect code in search bar. Redirect to Designations.jsp page w/o further encouragement
 {
 window.location.href = 'Designations.jsp';
 }
-else if(splits[0]=='true')
+else if(responseData.success==true)
 {
 var title = document.getElementById('title');
-title.value = splits[2];
+title.value = responseData.data.title;
 }
 else 
 {
