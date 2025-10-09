@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<meta charset='utf-8'>
+<head>
+<title>AJAX Examples</title>
+<style>
+.modalMask
+{
+width:100%;
+height:100%;
+top:0;
+left:0;
+border:1px solid red;
+background:gray;
+position:fixed;
+opacity:70%
+}
+.modalMaskDivision
+{
+width:400px;
+min-width:200px;
+height:300px;
+min-height:300px;
+background-color:blue;
+position:fixed;
+top:0;
+left:0;
+bottom:0;
+right:0;
+margin:auto;
+border:2px solid white;
+overflow:auto;
+padding:50px;
+}
+.closeButton
+{
+float:right;
+padding:2px 7px;
+cursor:pointer;
+transition: all 0.2s steps(4,end);
+}
+.closeButton:hover
+{
+background-color: red;
+transform: scale(1.5) rotate(90deg);
+}
+
+</style>
+<script>
+var ds = {
+"modals":[]
+};
+//foll. is a class
+function Modal(cid)
+{
+var objectAddress = this;
+this.onOpen = null;
+this.onClose = null;
+
+var contentId;
+if((typeof cid)=="string") contentId = cid;
+else contentId = cid["contentId"];
+
+var contentReference = document.getElementById(contentId);
+var modalMask = document.createElement("div");
+modalMask.classList.add("modalMask");
+var modalMaskDivision = document.createElement("div");
+modalMaskDivision.classList.add("modalMaskDivision");
+
+closeButtonSpan = document.createElement("span");
+closeButtonSpan.classList.add("closeButton");
+var closeButtonMarker = document.createTextNode("x");
+closeButtonSpan.appendChild(closeButtonMarker);
+modalMaskDivision.appendChild(closeButtonSpan);
+
+contentReference.remove();
+modalMaskDivision.appendChild(contentReference);
+//basic configurations done
+//if parameter is a json, implement configurations
+
+if(((typeof cid)=="string")==false) //means it is a json
+{
+//apply configs.
+var configurations = cid;
+
+if(configurations["header"]!=undefined) 
+{
+var header = document.createElement("H6");
+var headerContent = document.createTextNode(configurations["header"]);
+header.appendChild(headerContent);
+modalMaskDivision.insertBefore(header,contentReference);
+}
+
+if(configurations["footer"]!=undefined)
+{
+var footer = document.createElement("H6");
+var footerContent = document.createTextNode(configurations["footer"]);
+footer.appendChild(footerContent);
+modalMaskDivision.insertAdjacentElement("beforeend",footer);
+}
+
+if(configurations["size"]!=undefined)
+{
+dimensions = configurations["size"].split("x");
+if(dimensions.length!=2) throw "specify size as 'widthxheight' only";
+modalMaskDivision.style.width = dimensions[0] + "px";
+modalMaskDivision.style.height = dimensions[1] + "px";
+}
+
+if(configurations["closeButton"]!=undefined && configurations["closeButton"]==false)
+{
+closeButtonSpan.style.visibility = 'hidden';
+}
+
+if(configurations["maskColor"]!=undefined)
+{
+modalMask.style.background = configurations["maskColor"];
+}
+if(configurations["modalBackgroundColor"]!=undefined)
+{
+modalMaskDivision.style.background = configurations["modalBackgroundColor"];
+}
+
+
+
+
+}
+
+
+this.show = function(){
+document.body.appendChild(modalMask);
+document.body.appendChild(modalMaskDivision);
+if(this.onOpen) this.onOpen();
+};
+
+
+closeButtonSpan.onclick = function(){
+modalMask.remove();
+modalMaskDivision.remove();
+if(objectAddress.onClose) objectAddress.onClose();
+};
+
+
+
+ds.modals[contentId] = objectAddress;		//add modal to data structure of modals
+} //end of Modal function
+
+
+
+
+function createModal1()
+{
+var modal = ds.modals["ab"];
+modal.onOpen = function(){
+alert('Modal ab opened');
+};
+modal.onClose = function(){
+alert('Modal ab closed');
+};
+modal.show();
+}
+
+function createModal2()
+{
+var modal = ds.modals["pq"];
+modal.onOpen = function(){
+alert('Modal pq opened');
+};
+modal.onClose = function(){
+alert('Modal pq closed');
+};
+modal.show();
+}
+
+
+function createModal3()
+{
+var modal = new Modal({
+"contentId":"jk",
+"header":"Some heading",
+"footer":"Some footer",
+"size":"500x500",
+"closeButton":true,
+"maskColor":"#0000FF",
+"modalBackgroundColor":"#EE82EE"
+});
+
+modal.onOpen = function(){
+
+};
+modal.onClose = function(){
+
+};
+modal.show();
+}
+
+
+function loader()
+{
+var allTags = document.getElementsByTagName("*");	//returns a 'live collection' of 'references'
+var tag;
+var forModal;	// boolean
+var forModalTags = [];
+for(var i=0;i<allTags.length;i++)
+{
+tag=allTags[i];
+forModal = tag.getAttribute("forModal");
+if(forModal!=undefined && forModal=="true")
+{
+forModalTags.push(tag);			//new Modal("abc") removes abc from DOM. Hence DOM indexing changes. Hence it is likely that some elements might get be skipped.
+}					//Hence collect tags with attributes forModal="true" in an array named 'forModalTags' first.
+}
+
+for(var i=0;i<forModalTags.length;i++)		
+{
+tag = forModalTags[i];				
+var modal = new Modal(tag.id);			//process each tag. new Modal() removes that tag from DOM.
+}
+
+}//end of loader()
+
+window.addEventListener('load',loader);
+</script>
+</head>
+<body>
+
+
+<button onclick='createModal1()'>
+Create First Modal
+</button>
+<button onclick='createModal2()'>
+Create Second Modal
+</button>
+<button onclick='createModal3()'>
+Create Third Modal
+</button>
+
+<div id='ab' forModal="true">
+God is great
+</div>
+<div id='pq' forModal="true">
+Ujjain is the city of Gods
+</div>
+
+<div id='jk'>
+Trust God
+<button>
+Close modal
+</button>
+</div>
+
+<br>
+end of body
+</body>
+</html>
