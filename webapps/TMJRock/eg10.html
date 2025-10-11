@@ -43,15 +43,39 @@ cursor:pointer;
 var ds = {
 "modals":[]
 };
-//foll. is a class
-function Modal(cid)
+
+var $$$ = {
+"modals":{}
+};
+
+$$$.modals.show = function(mid)		//mid = modal id
 {
-objectAddress = this;
+var modal = null;
+for(var i=0;i<ds.modals.length;i++)
+{
+if(ds.modals[i].getContentId()==mid)
+{
+modal=ds.modals[i];
+break;
+}
+}
+if(modal==null) return;
+modal.show();
+}
+
+
+//foll. is a class
+function Modal(cref)	//cref = content reference
+{
+var objectAddress = this;
 this.onOpen = null;
 this.onClose = null;
-var contentId = cid;
-var contentReference = document.getElementById(cid);
-alert('remove parent logic');
+var contentReference = cref;
+
+this.getContentId = function(){
+return contentReference.id;
+};
+
 var contentParentReference = contentReference.parentElement;
 var contentIndex = 0;
 while(contentIndex < contentParentReference.children.length)
@@ -68,6 +92,43 @@ modalMask.classList.add("modalMask");
 var modalMaskDivision = document.createElement("div");
 modalMaskDivision.classList.add("modalMaskDivision");
 
+//lect 75 starts
+if(contentReference.hasAttribute("size"))
+{
+var sz = contentReference.getAttribute("size");
+}
+if(contentReference.hasAttribute("header"))
+{
+var hd = contentReference.getAttribute("header");
+}
+if(contentReference.hasAttribute("footer"))
+{
+var ft = contentReference.getAttribute("footer");
+}
+if(contentReference.hasAttribute("maskColor"))
+{
+var mkc = contentReference.getAttribute("maskColor");
+}
+if(contentReference.hasAttribute("modalBackgroundColor"))
+{
+var mbc = contentReference.getAttribute("modalBackgroundColor");
+}
+if(contentReference.hasAttribute("onOpen"))
+{
+var oo = contentReference.getAttribute("onOpen");
+alert(oo);
+alert(typeof oo);
+eval(oo);
+k="c=10+20";
+alert(k);
+eval(k);
+alert(c);
+}
+
+
+
+//lect 75 end
+
 var closeButtonSpan = document.createElement("span");
 closeButtonSpan.classList.add("closeButton");
 var closeButtonMarker = document.createTextNode("x");
@@ -76,7 +137,6 @@ modalMaskDivision.appendChild(closeButtonSpan);
 
 contentReference.remove();
 modalMaskDivision.appendChild(contentReference);
-contentReference.style.display = contentReference.oldDisplay;
 
 this.show = function(){
 document.body.appendChild(modalMask);
@@ -86,18 +146,8 @@ if(this.onOpen) this.onOpen();
 
 
 closeButtonSpan.onclick = function(){
-contentReference.style.display = 'none';
-contentReference.remove();
 modalMask.remove();
 modalMaskDivision.remove();
-if(contentParentReference.children.length == contentIndex)
-{
-contentParentReference.appendChild(contentReference);
-}
-else
-{
-contentParentReference.insertBefore(contentReference,contentParentReference.children[contentIndex]);
-}
 if(objectAddress.onClose) objectAddress.onClose();
 };
 
@@ -110,46 +160,36 @@ alert('bg got clicked. Closing window');
 } //end of Modal function
 
 
+function abOpened()
+{
+alert('Modal w/ ab opened');
+}
+function abClosed()
+{
+alert('Modal w/ ab closed');
+}
 
 
 function createModal1()
 {
-var modal = new Modal("ab");
-modal.onOpen = function(){
-alert('Modal ab opened');
-};
-modal.onClose = function(){
-alert('Modal ab closed');
-};
-modal.show();
+$$$.modals.show("ab");
 }
-
 
 function loader()
 {
-var allTags = document.getElementsByTagName("*");	//returns a 'live collection' of 'references'
-var tag;
-var forModal;	// boolean
-var forModalTags = [];
-for(var i=0;i<allTags.length;i++)
+var all = document.getElementsByTagName("*");
+for(var i=0;i<all.length;i++)
 {
-tag=allTags[i];
-forModal = tag.getAttribute("forModal");
-if(forModal!=undefined && forModal=="true")
+if(all[i].hasAttribute("forModal"))
 {
-forModalTags.push(tag);		//if we do tag.remove() in this loop, the DOM indexing changes.
+if(all[i].getAttribute("forModal").toUpperCase()=="TRUE")
+{
+ds.modals[ds.modals.length] = new Modal(all[i]);
+i--;							//typical corner case
 }
 }
-
-for(i=0;i<forModalTags.length;i++)
-{
-tag = forModalTags[i];
-var modal = new Modal(tag.id);
-ds.modals[ds.modals.length] = {tag:modal};
-tag.remove();
 }
-
-}//end of loader()
+}
 
 window.addEventListener('load',loader);
 </script>
@@ -163,15 +203,14 @@ Create First Modal
 <button onclick='createModal2()'>
 Create Second Modal
 </button>
-<div id='ab' forModal="true">
+
+<div id='ab' forModal="true" size="200x300" header="Some header" footer="Some footer" maskColor="#3355ff" modalBackgroundColor="#549933" closeButton="false" onOpen=abOpened onClose=abClosed>
 God is great
 </div>
 <div id='pq' forModal="true">
 Ujjain is the city of Gods
 </div>
-
-
 <br>
-end of body
+
 </body>
 </html>
