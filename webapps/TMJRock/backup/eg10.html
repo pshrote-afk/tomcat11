@@ -102,7 +102,7 @@ modalMaskDivision.insertAdjacentElement("beforeend",footer);
 if(configurations["size"]!=undefined)
 {
 dimensions = configurations["size"].split("x");
-if(dimensions.length!=2) throw "specify size as 'widthxheight' only";
+if(dimensions.length!=2) throw "In case of modal, specify size as 'widthxheight' only";
 modalMaskDivision.style.width = dimensions[0] + "px";
 modalMaskDivision.style.height = dimensions[1] + "px";
 }
