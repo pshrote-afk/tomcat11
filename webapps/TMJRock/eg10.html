@@ -51,7 +51,7 @@ var $$$ = {
 };
 
 $$$.modals.show = function(mid)		//mid = modal id
-{
+{    
 var modal = null;
 for(var i=0;i<ds.modals.length;i++)
 {
@@ -69,8 +69,8 @@ modal.show();
 function Modal(cref)	//cref = content reference
 {
 var objectAddress = this;
-this.onOpen = null;
-this.onClose = null;
+this.afterOpening = null;
+this.afterClosing = null;
 var contentReference = cref;
 
 this.getContentId = function(){
@@ -90,8 +90,13 @@ contentIndex++;
 
 var modalMask = document.createElement("div");
 modalMask.classList.add("modalMask");
+modalMask.style.display='none';
 var modalMaskDivision = document.createElement("div");
 modalMaskDivision.classList.add("modalMaskDivision");
+modalMaskDivision.style.display='none';
+
+document.body.appendChild(modalMask);
+document.body.appendChild(modalMaskDivision);
 
 //lect 75 starts
 var headerDivision = document.createElement("div");
@@ -138,6 +143,8 @@ contentDivision.style.overflow="auto";
 contentDivision.style.padding="5px";
 contentReference.remove();
 contentDivision.appendChild(contentReference);
+contentReference.style.display="block";
+contentReference.style.visibility="visible";
 modalMaskDivision.appendChild(contentDivision);
 
 var footerDivision = document.createElement("div");
@@ -170,38 +177,60 @@ headerDivision.appendChild(closeButtonSpan);
 }
 }
 
-if(contentReference.hasAttribute("onOpen"))
+if(contentReference.hasAttribute("beforeOpening"))
 {
-var oo = contentReference.getAttribute("onOpen");
-this.onOpen=oo;
+var oo = contentReference.getAttribute("beforeOpening");
+this.beforeOpening=oo;
 }
-if(contentReference.hasAttribute("onClose"))
+if(contentReference.hasAttribute("afterOpening"))
 {
-var oc = contentReference.getAttribute("onClose");
-this.onClose=oc;
+var oo = contentReference.getAttribute("afterOpening");
+this.afterOpening=oo;
+}
+if(contentReference.hasAttribute("beforeClosing"))
+{
+var oc = contentReference.getAttribute("beforeClosing");
+this.beforeClosing=oc;
+}
+if(contentReference.hasAttribute("afterClosing"))
+{
+var oc = contentReference.getAttribute("afterClosing");
+this.afterClosing=oc;
 }
 
 //lect 75 end
 
 this.show = function(){
-document.body.appendChild(modalMask);
-document.body.appendChild(modalMaskDivision);
-if(this.onOpen) 
+let openModal = true;	//true by default
+if(this.beforeOpening)
 {
-setTimeout(function(){eval(objectAddress.onOpen);},100);
+openModal = eval(this.beforeOpening);
+}
+
+if(openModal)
+{
+
+modalMask.style.display = 'block';
+modalMaskDivision.style.display = 'block';
+if(this.afterOpening) setTimeout(function(){eval(objectAddress.afterOpening);},100);
 }
 };
 
 if(closeButtonSpan!=null)
 {
 closeButtonSpan.onclick = function(){
-modalMask.remove();
-modalMaskDivision.remove();
-if(objectAddress.onClose) 
+let closeModal = true;
+if(objectAddress.beforeClosing)
 {
-setTimeout(function(){eval(objectAddress.onClose);},100);
+closeModal = eval(objectAddress.beforeClosing);
 }
 
+if(closeModal)
+{
+modalMask.style.display="none";
+modalMaskDivision.style.display="none";
+if(objectAddress.afterClosing) setTimeout(function(){eval(objectAddress.afterClosing);},100);
+}
 };
 }
 
@@ -213,10 +242,19 @@ alert('bg got clicked. Closing window');
 
 } //end of Modal function
 
-
+function abBeforeOpening()
+{
+alert('Modal w/ ab is about to be opened');
+return true;
+}
 function abOpened()
 {
 alert('Modal w/ ab opened');
+}
+function abBeforeClosing()
+{
+alert('Modal w/ ab is about to be closed');
+return true;
 }
 function abClosed()
 {
@@ -238,6 +276,7 @@ if(all[i].hasAttribute("forModal"))
 {
 if(all[i].getAttribute("forModal").toUpperCase()=="TRUE")
 {
+all[i].setAttribute("forModal","false");
 ds.modals[ds.modals.length] = new Modal(all[i]);
 i--;							//typical corner case
 }
@@ -254,11 +293,12 @@ window.addEventListener('load',loader);
 <button onclick='createModal1()'>
 Create First Modal
 </button>
-<button onclick='createModal2()'>
-Create Second Modal
-</button>
 
-<div id='ab' forModal="true" size="200x300" header="Some header" footer="Some footer" maskColor="#3355ff" modalBackgroundColor="#549933" closeButton="true" onOpen="abOpened()" onClose="abClosed()">
+<div id='ab' style='display:none' forModal="true" size="200x300" header="Some header" footer="Some footer" maskColor="#3355ff" modalBackgroundColor="#549933" closeButton="true" 
+beforeOpening="abBeforeOpening()"
+afterOpening="abOpened()" 
+beforeClosing="abBeforeClosing()"
+afterClosing="abClosed()">
 God is great
 </div>
 <div id='pq' forModal="true">
