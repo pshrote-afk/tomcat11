@@ -205,7 +205,7 @@ for(var i=0;i<allTags.length;i++)
 {
 tag=allTags[i];
 forModal = tag.getAttribute("forModal");
-if(forModal!=undefined && forModal=="true")
+if(forModal!=undefined && forModal.toUpperCase()=="TRUE")
 {
 forModalTags.push(tag);			//new Modal("abc") removes abc from DOM. Hence DOM indexing changes. Hence it is likely that some elements might get be skipped.
 }					//Hence collect tags with attributes forModal="true" in an array named 'forModalTags' first.
