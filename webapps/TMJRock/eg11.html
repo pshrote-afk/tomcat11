@@ -4,7 +4,7 @@
 <head>
 <title>AJAX Examples</title>
 <style>
-.modalMask
+.tmjrock_modalMask
 {
 width:100%;
 height:100%;
@@ -15,7 +15,7 @@ background:gray;
 position:fixed;
 opacity:70%
 }
-.modalMaskDivision
+.tmjrock_modalMaskDivision
 {
 width:400px;
 min-width:200px;
@@ -30,7 +30,7 @@ right:0;
 margin:auto;
 border:2px solid white;
 }
-.closeButton
+.tmjrock_closeButton
 {
 float:right;
 padding:2px 7px;
@@ -56,6 +56,8 @@ $$$.model = {
 "modals":[]
 };
 
+//modal specific code starts here
+
 $$$.modals = {};	//just an empty object - to be able to do $$$.modals.show("ab");
 /*above is same as
 var $$$ = {
@@ -77,6 +79,165 @@ break;
 if(modal==null) return;
 modal.show();
 }
+
+//start of Modal class
+//foll. is a class
+function Modal(cref)	//cref = content reference
+{
+var objectAddress = this;
+this.afterOpening = null;
+this.afterClosing = null;
+var contentReference = cref;
+
+this.getContentId = function(){
+return contentReference.id;
+};
+
+
+var modalMask = document.createElement("div");
+modalMask.classList.add("tmjrock_modalMask");
+modalMask.style.display='none';
+var modalMaskDivision = document.createElement("div");
+modalMaskDivision.classList.add("tmjrock_modalMaskDivision");
+modalMaskDivision.style.display='none';
+
+document.body.appendChild(modalMask);
+document.body.appendChild(modalMaskDivision);
+
+//lect 75 starts
+var headerDivision = document.createElement("div");
+headerDivision.style.background="red";
+headerDivision.style.right="0";
+headerDivision.style.height="40px";
+headerDivision.style.padding="5px";
+modalMaskDivision.appendChild(headerDivision);
+
+if(contentReference.hasAttribute("size"))
+{
+var sz = contentReference.getAttribute("size");
+dimensions = sz.split("x");
+if(dimensions.length!=2) throw "In case of modal, specify size as 'widthxheight' only";
+modalMaskDivision.style.width = dimensions[0] + "px";
+modalMaskDivision.style.height = dimensions[1] + "px";
+}
+else
+{
+modalMaskDivision.style.width="300px";
+modalMaskDivision.style.height="300px";
+}
+if(contentReference.hasAttribute("header"))
+{
+var hd = contentReference.getAttribute("header");
+headerDivision.innerHTML=hd;
+}
+
+if(contentReference.hasAttribute("maskColor"))
+{
+var mkc = contentReference.getAttribute("maskColor");
+modalMaskDivision.style.background = mkc;
+}
+if(contentReference.hasAttribute("modalBackgroundColor"))
+{
+var mbc = contentReference.getAttribute("modalBackgroundColor");
+modalMaskDivision.style.background = mbc;
+}
+
+var contentDivision = document.createElement("div");
+contentDivision.style.height = (modalMaskDivision.style.height.substring(0,modalMaskDivision.style.height.length-2)-130)+"px";
+contentDivision.style.width = "98%";
+contentDivision.style.overflow="auto";
+contentDivision.style.padding="5px";
+contentReference.remove();
+contentDivision.appendChild(contentReference);
+contentReference.style.display="block";
+contentReference.style.visibility="visible";
+modalMaskDivision.appendChild(contentDivision);
+
+var footerDivision = document.createElement("div");
+footerDivision.style.background="pink";
+footerDivision.style.left="0";
+footerDivision.style.right="0";
+footerDivision.style.height="40px";
+footerDivision.style.position="absolute";
+footerDivision.style.bottom="0";
+footerDivision.style.padding="5px";
+modalMaskDivision.appendChild(footerDivision);
+
+if(contentReference.hasAttribute("footer"))
+{
+var ft = contentReference.getAttribute("footer");
+footerDivision.innerHTML = ft;
+}
+
+var closeButtonSpan =null;
+if(contentReference.hasAttribute("closeButton"))
+{
+var cb = contentReference.getAttribute("closeButton");
+if(cb.toUpperCase()=="TRUE")
+{
+closeButtonSpan = document.createElement("span");
+closeButtonSpan.classList.add("tmjrock_closeButton");
+var closeButtonMarker = document.createTextNode("x");
+closeButtonSpan.appendChild(closeButtonMarker);
+headerDivision.appendChild(closeButtonSpan);
+}
+}
+
+if(contentReference.hasAttribute("beforeOpening"))
+{
+var oo = contentReference.getAttribute("beforeOpening");
+this.beforeOpening=oo;
+}
+if(contentReference.hasAttribute("afterOpening"))
+{
+var oo = contentReference.getAttribute("afterOpening");
+this.afterOpening=oo;
+}
+if(contentReference.hasAttribute("beforeClosing"))
+{
+var oc = contentReference.getAttribute("beforeClosing");
+this.beforeClosing=oc;
+}
+if(contentReference.hasAttribute("afterClosing"))
+{
+var oc = contentReference.getAttribute("afterClosing");
+this.afterClosing=oc;
+}
+//lect 75 end
+this.show = function(){
+let openModal = true;	//true by default
+if(this.beforeOpening)
+{
+openModal = eval(this.beforeOpening);
+}
+if(openModal)
+{
+modalMask.style.display = 'block';
+modalMaskDivision.style.display = 'block';
+if(this.afterOpening) setTimeout(function(){eval(objectAddress.afterOpening);},100);
+}
+};
+
+if(closeButtonSpan!=null)
+{
+closeButtonSpan.onclick = function(){
+let closeModal = true;
+if(objectAddress.beforeClosing)
+{
+closeModal = eval(objectAddress.beforeClosing);
+}
+if(closeModal)
+{
+modalMask.style.display="none";
+modalMaskDivision.style.display="none";
+if(objectAddress.afterClosing) setTimeout(function(){eval(objectAddress.afterClosing);},100);
+}
+};
+}
+}
+//end of Modal class
+
+//modal specific code ends here
 
 $$$.accordianHeadingClicked = function(accordianIndex,panelIndex)
 {
@@ -183,175 +344,6 @@ $$$.model.modals[$$$.model.modals.length] = new Modal(tag);		//process each tag.
 }
 
 }//end of modalLoader()
-
-
-window.addEventListener('load',function(){
-$$$.initFramework();	//initializes accordian panes
-$$$.modalLoader();	//initializes modals
-});
-
-
-//start of Modal class
-//foll. is a class
-function Modal(cref)	//cref = content reference
-{
-var objectAddress = this;
-this.afterOpening = null;
-this.afterClosing = null;
-var contentReference = cref;
-
-this.getContentId = function(){
-return contentReference.id;
-};
-
-
-var modalMask = document.createElement("div");
-modalMask.classList.add("modalMask");
-modalMask.style.display='none';
-var modalMaskDivision = document.createElement("div");
-modalMaskDivision.classList.add("modalMaskDivision");
-modalMaskDivision.style.display='none';
-
-document.body.appendChild(modalMask);
-document.body.appendChild(modalMaskDivision);
-
-//lect 75 starts
-var headerDivision = document.createElement("div");
-headerDivision.style.background="red";
-headerDivision.style.right="0";
-headerDivision.style.height="40px";
-headerDivision.style.padding="5px";
-modalMaskDivision.appendChild(headerDivision);
-
-if(contentReference.hasAttribute("size"))
-{
-var sz = contentReference.getAttribute("size");
-dimensions = sz.split("x");
-if(dimensions.length!=2) throw "In case of modal, specify size as 'widthxheight' only";
-modalMaskDivision.style.width = dimensions[0] + "px";
-modalMaskDivision.style.height = dimensions[1] + "px";
-}
-else
-{
-modalMaskDivision.style.width="300px";
-modalMaskDivision.style.height="300px";
-}
-if(contentReference.hasAttribute("header"))
-{
-var hd = contentReference.getAttribute("header");
-headerDivision.innerHTML=hd;
-}
-
-if(contentReference.hasAttribute("maskColor"))
-{
-var mkc = contentReference.getAttribute("maskColor");
-modalMaskDivision.style.background = mkc;
-}
-if(contentReference.hasAttribute("modalBackgroundColor"))
-{
-var mbc = contentReference.getAttribute("modalBackgroundColor");
-modalMaskDivision.style.background = mbc;
-}
-
-var contentDivision = document.createElement("div");
-contentDivision.style.height = (modalMaskDivision.style.height.substring(0,modalMaskDivision.style.height.length-2)-130)+"px";
-contentDivision.style.width = "98%";
-contentDivision.style.overflow="auto";
-contentDivision.style.padding="5px";
-contentReference.remove();
-contentDivision.appendChild(contentReference);
-contentReference.style.display="block";
-contentReference.style.visibility="visible";
-modalMaskDivision.appendChild(contentDivision);
-
-var footerDivision = document.createElement("div");
-footerDivision.style.background="pink";
-footerDivision.style.left="0";
-footerDivision.style.right="0";
-footerDivision.style.height="40px";
-footerDivision.style.position="absolute";
-footerDivision.style.bottom="0";
-footerDivision.style.padding="5px";
-modalMaskDivision.appendChild(footerDivision);
-
-if(contentReference.hasAttribute("footer"))
-{
-var ft = contentReference.getAttribute("footer");
-footerDivision.innerHTML = ft;
-}
-
-var closeButtonSpan =null;
-if(contentReference.hasAttribute("closeButton"))
-{
-var cb = contentReference.getAttribute("closeButton");
-if(cb.toUpperCase()=="TRUE")
-{
-closeButtonSpan = document.createElement("span");
-closeButtonSpan.classList.add("closeButton");
-var closeButtonMarker = document.createTextNode("x");
-closeButtonSpan.appendChild(closeButtonMarker);
-headerDivision.appendChild(closeButtonSpan);
-}
-}
-
-if(contentReference.hasAttribute("beforeOpening"))
-{
-var oo = contentReference.getAttribute("beforeOpening");
-this.beforeOpening=oo;
-}
-if(contentReference.hasAttribute("afterOpening"))
-{
-var oo = contentReference.getAttribute("afterOpening");
-this.afterOpening=oo;
-}
-if(contentReference.hasAttribute("beforeClosing"))
-{
-var oc = contentReference.getAttribute("beforeClosing");
-this.beforeClosing=oc;
-}
-if(contentReference.hasAttribute("afterClosing"))
-{
-var oc = contentReference.getAttribute("afterClosing");
-this.afterClosing=oc;
-}
-
-//lect 75 end
-
-this.show = function(){
-let openModal = true;	//true by default
-if(this.beforeOpening)
-{
-openModal = eval(this.beforeOpening);
-}
-
-if(openModal)
-{
-
-modalMask.style.display = 'block';
-modalMaskDivision.style.display = 'block';
-if(this.afterOpening) setTimeout(function(){eval(objectAddress.afterOpening);},100);
-}
-};
-
-if(closeButtonSpan!=null)
-{
-closeButtonSpan.onclick = function(){
-let closeModal = true;
-if(objectAddress.beforeClosing)
-{
-closeModal = eval(objectAddress.beforeClosing);
-}
-
-if(closeModal)
-{
-modalMask.style.display="none";
-modalMaskDivision.style.display="none";
-if(objectAddress.afterClosing) setTimeout(function(){eval(objectAddress.afterClosing);},100);
-}
-};
-}
-}
-//end of Modal class
 
 function TMJRockElement(element)
 {
@@ -539,8 +531,13 @@ xmlHttpRequest.send(queryString);
 
 }//end of $$$.ajax function
 
-
 //TMJRock accordian section ends
+
+window.addEventListener('load',function(){
+$$$.initFramework();	//initializes accordian panes
+$$$.modalLoader();	//initializes modals
+});
+
 //TMJRock ends
 
 //TMJRock user part starts
@@ -639,7 +636,7 @@ Content 2 Content 2 Content 2 Content 2 Content 2<br>
 Create First Modal
 </button>
 
-<div id='ab' style='display:none' forModal="true" size="400x400" header="Some header" footer="Some footer" maskColor="#3355ff" modalBackgroundColor="#549933" closeButton="true" 
+<div id='ab' style='display:none' forModal="true" size="200x300" header="Some header" footer="Some footer" maskColor="#3355ff" modalBackgroundColor="#549933" closeButton="true" 
 beforeOpening="abBeforeOpening()"
 afterOpening="abOpened()" 
 beforeClosing="abBeforeClosing()"
