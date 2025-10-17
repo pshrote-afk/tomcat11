@@ -4,62 +4,95 @@
 <head>
 <title>AJAX Examples</title>
 <script>
-function doSomething()
-{
-//print innerHTML of all elements which has tm="yes" attribute value pair in it
+//this will be part of TMJRock JavaScript library in the end
+var panels=[];
+var expandedIndex=-1;
 
-var allElements = document.querySelectorAll('*');
-var element;
-var value;
-var i=0;
-while(i<allElements.length)
+function accordianHeadingClicked(x)
 {
-element = allElements[i];
-value = element.getAttribute('tm');
-if(value=='yes')
-{
-console.log(element.innerHTML);
-}
-i++;
+if(expandedIndex!=-1) panels[expandedIndex].style.display = "none";
+panels[x+1].style.display = panels[x+1].oldDisplay;
+expandedIndex = x+1;
 }
 
+function doit()
+{
+let accord = document.getElementById("mymy");
+let children = accord.childNodes;
+let x;
+for(x=0;x<children.length;x++)
+{
+//alert(children[x].nodeName);
+if(children[x].nodeName=="H3")
+{
+panels[panels.length] = children[x];
+}
+if(children[x].nodeName=="DIV")
+{
+panels[panels.length] = children[x];
+}
+}
+if(panels.length%2 != 0) throw "Headings and division malformed to create accordian";
+for(x=0;x<panels.length;x+=2)
+{
+if(panels[x].nodeName!="H3") throw "Headings and division malformed to create accordian";
+if(panels[x+1].nodeName!="DIV") throw "Headings and division malformed to create accordian";
 }
 
+function createClickHandler(i)
+{
+return function(){
+accordianHeadingClicked(i);
+};
+}
+
+for(x=0;x<panels.length;x+=2)
+{
+panels[x].onclick = createClickHandler(x);
+panels[x+1].oldDisplay = panels[x+1].style.display;
+panels[x+1].style.display = "none"
+}
+}
+window.addEventListener('load',doit);
+
+//TMJRock ends
+//TMJRock user part starts
 
 </script>
-
+</head>
 <body>
-God is great
-<div id='whatever1' tm='yes'>
-Hello Hello hello<br>
-Hello Hello hello<br>
-Hello Hello hello<br>
-Hello Hello hello<br>
-Hello Hello hello<br>
 
+<div id="mymy">
+<h3>Heading 1</h3>
+<div>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
+Content 1 Content 1 Content 1 Content 1 Content 1<br>
 </div>
 
-<span id='whatever2' tm='yes'>
-Whatever whatever whatever<br>
-Whatever whatever whatever<br>
-Whatever whatever whatever<br>
-Whatever whatever whatever<br>
-Whatever whatever whatever<br>
-</span>
-
-<div id='cool'>
-Cool cool cool<br>
-Cool cool cool<br>
-Cool cool cool<br>
+<h3>Heading 2</h3>
+<div>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
+Content 2 Content 2 Content 2 Content 2 Content 2<br>
 </div>
 
-<span id='something' tm='no'>
-Something something<br>
-</span>
+<h3>Heading 3</h3>
+<div>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+Content 3 Content 3 Content 3 Content 3 Content 3<br>
+</div>
+
+</div> <!--end of 'mymy'-->
 
 
-<button type='button' onClick='doSomething()'>
-Do something
-</button>
 </body>
 </html>

@@ -29,20 +29,15 @@ bottom:0;
 right:0;
 margin:auto;
 border:2px solid white;
-overflow:auto;
-padding:50px;
 }
 .closeButton
 {
 float:right;
 padding:2px 7px;
 cursor:pointer;
-transition: all 0.2s steps(4,end);
-}
-.closeButton:hover
-{
-background-color: red;
-transform: scale(1.5) rotate(90deg);
+margin-right:5px;
+margin-top:5px;
+font-size:14pt;
 }
 
 </style>
@@ -50,174 +45,234 @@ transform: scale(1.5) rotate(90deg);
 var ds = {
 "modals":[]
 };
+
+var $$$ = {
+"modals":{}
+};
+
+$$$.modals.show = function(mid)		//mid = modal id
+{    
+var modal = null;
+for(var i=0;i<ds.modals.length;i++)
+{
+if(ds.modals[i].getContentId()==mid)
+{
+modal=ds.modals[i];
+break;
+}
+}
+if(modal==null) return;
+modal.show();
+}
+
 //foll. is a class
-function Modal(cid)
+function Modal(cref)	//cref = content reference
 {
 var objectAddress = this;
-this.onOpen = null;
-this.onClose = null;
+this.afterOpening = null;
+this.afterClosing = null;
+var contentReference = cref;
 
-var contentId;
-if((typeof cid)=="string") contentId = cid;
-else contentId = cid["contentId"];
+this.getContentId = function(){
+return contentReference.id;
+};
 
-var contentReference = document.getElementById(contentId);
+
 var modalMask = document.createElement("div");
 modalMask.classList.add("modalMask");
+modalMask.style.display='none';
 var modalMaskDivision = document.createElement("div");
 modalMaskDivision.classList.add("modalMaskDivision");
+modalMaskDivision.style.display='none';
 
-closeButtonSpan = document.createElement("span");
-closeButtonSpan.classList.add("closeButton");
-var closeButtonMarker = document.createTextNode("x");
-closeButtonSpan.appendChild(closeButtonMarker);
-modalMaskDivision.appendChild(closeButtonSpan);
+document.body.appendChild(modalMask);
+document.body.appendChild(modalMaskDivision);
 
-contentReference.remove();
-modalMaskDivision.appendChild(contentReference);
-//basic configurations done
-//if parameter is a json, implement configurations
+//lect 75 starts
+var headerDivision = document.createElement("div");
+headerDivision.style.background="red";
+headerDivision.style.right="0";
+headerDivision.style.height="40px";
+headerDivision.style.padding="5px";
+modalMaskDivision.appendChild(headerDivision);
 
-if(((typeof cid)=="string")==false) //means it is a json
+if(contentReference.hasAttribute("size"))
 {
-//apply configs.
-var configurations = cid;
-
-if(configurations["header"]!=undefined) 
-{
-var header = document.createElement("H6");
-var headerContent = document.createTextNode(configurations["header"]);
-header.appendChild(headerContent);
-modalMaskDivision.insertBefore(header,contentReference);
-}
-
-if(configurations["footer"]!=undefined)
-{
-var footer = document.createElement("H6");
-var footerContent = document.createTextNode(configurations["footer"]);
-footer.appendChild(footerContent);
-modalMaskDivision.insertAdjacentElement("beforeend",footer);
-}
-
-if(configurations["size"]!=undefined)
-{
-dimensions = configurations["size"].split("x");
+var sz = contentReference.getAttribute("size");
+dimensions = sz.split("x");
 if(dimensions.length!=2) throw "In case of modal, specify size as 'widthxheight' only";
 modalMaskDivision.style.width = dimensions[0] + "px";
 modalMaskDivision.style.height = dimensions[1] + "px";
 }
-
-if(configurations["closeButton"]!=undefined && configurations["closeButton"]==false)
+else
 {
-closeButtonSpan.style.visibility = 'hidden';
+modalMaskDivision.style.width="300px";
+modalMaskDivision.style.height="300px";
 }
-
-if(configurations["maskColor"]!=undefined)
+if(contentReference.hasAttribute("header"))
 {
-modalMask.style.background = configurations["maskColor"];
+var hd = contentReference.getAttribute("header");
+headerDivision.innerHTML=hd;
 }
-if(configurations["modalBackgroundColor"]!=undefined)
+
+if(contentReference.hasAttribute("maskColor"))
 {
-modalMaskDivision.style.background = configurations["modalBackgroundColor"];
+var mkc = contentReference.getAttribute("maskColor");
+modalMaskDivision.style.background = mkc;
+}
+if(contentReference.hasAttribute("modalBackgroundColor"))
+{
+var mbc = contentReference.getAttribute("modalBackgroundColor");
+modalMaskDivision.style.background = mbc;
 }
 
+var contentDivision = document.createElement("div");
+contentDivision.style.height = (modalMaskDivision.style.height.substring(0,modalMaskDivision.style.height.length-2)-130)+"px";
+contentDivision.style.width = "98%";
+contentDivision.style.overflow="auto";
+contentDivision.style.padding="5px";
+contentReference.remove();
+contentDivision.appendChild(contentReference);
+contentReference.style.display="block";
+contentReference.style.visibility="visible";
+modalMaskDivision.appendChild(contentDivision);
 
+var footerDivision = document.createElement("div");
+footerDivision.style.background="pink";
+footerDivision.style.left="0";
+footerDivision.style.right="0";
+footerDivision.style.height="40px";
+footerDivision.style.position="absolute";
+footerDivision.style.bottom="0";
+footerDivision.style.padding="5px";
+modalMaskDivision.appendChild(footerDivision);
 
-
+if(contentReference.hasAttribute("footer"))
+{
+var ft = contentReference.getAttribute("footer");
+footerDivision.innerHTML = ft;
 }
 
+var closeButtonSpan =null;
+if(contentReference.hasAttribute("closeButton"))
+{
+var cb = contentReference.getAttribute("closeButton");
+if(cb.toUpperCase()=="TRUE")
+{
+closeButtonSpan = document.createElement("span");
+closeButtonSpan.classList.add("closeButton");
+var closeButtonMarker = document.createTextNode("x");
+closeButtonSpan.appendChild(closeButtonMarker);
+headerDivision.appendChild(closeButtonSpan);
+}
+}
+
+if(contentReference.hasAttribute("beforeOpening"))
+{
+var oo = contentReference.getAttribute("beforeOpening");
+this.beforeOpening=oo;
+}
+if(contentReference.hasAttribute("afterOpening"))
+{
+var oo = contentReference.getAttribute("afterOpening");
+this.afterOpening=oo;
+}
+if(contentReference.hasAttribute("beforeClosing"))
+{
+var oc = contentReference.getAttribute("beforeClosing");
+this.beforeClosing=oc;
+}
+if(contentReference.hasAttribute("afterClosing"))
+{
+var oc = contentReference.getAttribute("afterClosing");
+this.afterClosing=oc;
+}
+
+//lect 75 end
 
 this.show = function(){
-document.body.appendChild(modalMask);
-document.body.appendChild(modalMaskDivision);
-if(this.onOpen) this.onOpen();
+let openModal = true;	//true by default
+if(this.beforeOpening)
+{
+openModal = eval(this.beforeOpening);
+}
+
+if(openModal)
+{
+
+modalMask.style.display = 'block';
+modalMaskDivision.style.display = 'block';
+if(this.afterOpening) setTimeout(function(){eval(objectAddress.afterOpening);},100);
+}
 };
 
-
+if(closeButtonSpan!=null)
+{
 closeButtonSpan.onclick = function(){
-modalMask.remove();
-modalMaskDivision.remove();
-if(objectAddress.onClose) objectAddress.onClose();
+let closeModal = true;
+if(objectAddress.beforeClosing)
+{
+closeModal = eval(objectAddress.beforeClosing);
+}
+
+if(closeModal)
+{
+modalMask.style.display="none";
+modalMaskDivision.style.display="none";
+if(objectAddress.afterClosing) setTimeout(function(){eval(objectAddress.afterClosing);},100);
+}
 };
+}
+
+modalMask.onclick = function(){
+closeButtonSpan.click();
+alert('bg got clicked. Closing window');
+}
 
 
-
-ds.modals[contentId] = objectAddress;		//add modal to data structure of modals
 } //end of Modal function
 
-
+function abBeforeOpening()
+{
+alert('Modal w/ ab is about to be opened');
+return true;
+}
+function abOpened()
+{
+alert('Modal w/ ab opened');
+}
+function abBeforeClosing()
+{
+alert('Modal w/ ab is about to be closed');
+return true;
+}
+function abClosed()
+{
+alert('Modal w/ ab closed');
+}
 
 
 function createModal1()
 {
-var modal = ds.modals["ab"];
-modal.onOpen = function(){
-alert('Modal ab opened');
-};
-modal.onClose = function(){
-alert('Modal ab closed');
-};
-modal.show();
+$$$.modals.show("ab");
 }
-
-function createModal2()
-{
-var modal = ds.modals["pq"];
-modal.onOpen = function(){
-alert('Modal pq opened');
-};
-modal.onClose = function(){
-alert('Modal pq closed');
-};
-modal.show();
-}
-
-
-function createModal3()
-{
-var modal = new Modal({
-"contentId":"jk",
-"header":"Some heading",
-"footer":"Some footer",
-"size":"500x500",
-"closeButton":true,
-"maskColor":"#0000FF",
-"modalBackgroundColor":"#EE82EE"
-});
-
-modal.onOpen = function(){
-
-};
-modal.onClose = function(){
-
-};
-modal.show();
-}
-
 
 function loader()
 {
-var allTags = document.getElementsByTagName("*");	//returns a 'live collection' of 'references'
-var tag;
-var forModal;	// boolean
-var forModalTags = [];
-for(var i=0;i<allTags.length;i++)
+var all = document.getElementsByTagName("*");
+for(var i=0;i<all.length;i++)
 {
-tag=allTags[i];
-forModal = tag.getAttribute("forModal");
-if(forModal!=undefined && forModal.toUpperCase()=="TRUE")
+if(all[i].hasAttribute("forModal"))
 {
-forModalTags.push(tag);			//new Modal("abc") removes abc from DOM. Hence DOM indexing changes. Hence it is likely that some elements might get be skipped.
-}					//Hence collect tags with attributes forModal="true" in an array named 'forModalTags' first.
+if(all[i].getAttribute("forModal").toUpperCase()=="TRUE")
+{
+all[i].setAttribute("forModal","false");
+ds.modals[ds.modals.length] = new Modal(all[i]);
+i--;							//typical corner case
 }
-
-for(var i=0;i<forModalTags.length;i++)		
-{
-tag = forModalTags[i];				
-var modal = new Modal(tag.id);			//process each tag. new Modal() removes that tag from DOM.
 }
-
-}//end of loader()
+}
+}
 
 window.addEventListener('load',loader);
 </script>
@@ -228,29 +283,18 @@ window.addEventListener('load',loader);
 <button onclick='createModal1()'>
 Create First Modal
 </button>
-<button onclick='createModal2()'>
-Create Second Modal
-</button>
-<button onclick='createModal3()'>
-Create Third Modal
-</button>
 
-<div id='ab' forModal="true">
+<div id='ab' style='display:none' forModal="true" size="200x300" header="Some header" footer="Some footer" maskColor="#3355ff" modalBackgroundColor="#549933" closeButton="true" 
+beforeOpening="abBeforeOpening()"
+afterOpening="abOpened()" 
+beforeClosing="abBeforeClosing()"
+afterClosing="abClosed()">
 God is great
 </div>
 <div id='pq' forModal="true">
 Ujjain is the city of Gods
 </div>
-
-<div id='jk'>
-Trust God
-<br><br>
-<button>
-Close modal
-</button>
-</div>
-
 <br>
-end of body
+
 </body>
 </html>

@@ -4,148 +4,251 @@
 <head>
 <title>AJAX Examples</title>
 <script>
-//TMJRock code starts here
-function $$$()
-{
-}
-var accordianPaneDiv = null;
+//this will be part of TMJRock JavaScript library in the end
 
-$$$.onDocumentLoaded = function(functionAsParameter){
-document.addEventListener('DOMContentLoaded',functionAsParameter);
+//code from eg4.html starts
+
+function $$$(cid){
+let element = document.getElementById(cid);
+if(!element) throw "Invalid id: "+cid;
+return new TMJRockElement(element);
+} //end of $$$ function
+
+function TMJRockElement(element)
+{
+this.element = element;
+
+this.fillComboBox = function(configurations){
+//to do: apply validation for fields recevied. Lect 66.
+
+var designations = configurations.dataSource;
+
+var obj1;
+if(configurations.firstOption!=null)
+{
+obj1 = document.createElement("option");
+obj1.value = configurations.firstOption.value;
+obj1.text = configurations.firstOption.text;
+element.appendChild(obj1);
+}
+for(var i=0;i<designations.length;i++)
+{
+obj1 = document.createElement("option");
+obj1.value = designations[i][configurations.value]; // In Java we would've written - designations[i].(configurations.value);
+obj1.text = designations[i][configurations.text];
+element.appendChild(obj1);
+}
+}; //end of TMJRockElement fillComboBox().
+
+this.html = function(content)
+{
+if(typeof this.element.innerHTML=="string")
+{
+if((typeof content)=="string")
+{
+this.element.innerHTML=content;
+}
+return this.element.innerHTML;
+}
+return null;
 }
 
-$$$.openAccordianPane = function(accordianHeading){
-var next = accordianHeading.nextElementSibling;
-if(next == accordianPaneDiv) 
+this.value = function(content)
 {
-next.hidden = true;
-accordianPaneDiv = null;
-return;
+if(typeof this.element.value)
+{
+if((typeof content) == "string")
+{
+this.element.value = content;
+}
+return this.element.value;
+}
+return null;
 }
 
-if(accordianPaneDiv==null)
+
+} //end of TMJRockElement
+
+
+$$$.ajax = function(jsonObject)
 {
-next.hidden = false;
+if(!jsonObject["url"]) throw "url property is missing in call to ajax";
+let url = jsonObject["url"];
+if((typeof url)!="string") throw "url property should be of string type in call to ajax";
+
+let methodType = "GET"
+if(jsonObject["methodType"])
+{
+methodType = jsonObject["methodType"];
+if((typeof methodType)!="string") throw "methodType property should be of string type in call to ajax";
+methodType = methodType.toUpperCase();
+if(["GET","POST"].includes(methodType)==false) throw "methodType should be GET/POST in call to ajax";
+}
+
+let onSuccess=null;
+if(jsonObject["success"])
+{
+onSuccess = jsonObject["success"];
+if((typeof onSuccess)!="function") throw "success property should be a function in call to ajax";
+}
+
+let onFailure=null;
+if(jsonObject["failure"])
+{
+onFailure = jsonObject["failure"];
+if((typeof onFailure)!="function") throw "failure property should be a function in call to ajax";
+}
+
+if(methodType=="GET")
+{
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(onSuccess) onSuccess(responseData);
 }
 else
 {
-accordianPaneDiv.hidden = true;
-next.hidden = false;
+if(onFailure) onFailure();
 }
-accordianPaneDiv = next;
-
 }
+};
 
-$$$.toAccordian = function(elementId){
-var allH3 = document.querySelectorAll('h3');
-var i = 0;
-var next;
-while(i<allH3.length)
+if(jsonObject["data"])
 {
-allH3[i].onclick = function(){
-$$$.openAccordianPane(this);
+let jsonData = jsonObject["data"];
+let queryString = "";
+let qsName;
+let qsValue;
+let xx=0;
+for(k in jsonData)
+{
+if(xx==0) queryString = "?";	//Will run first time
+if(xx>0) queryString += "&";	//Won't run first time. Then will run everytime.
+xx++;
+qsName = encodeURI(k);
+qsValue = encodeURI(jsonData[k]);
+queryString = queryString + qsName + "=" + qsValue;
 }
-allH3[i].style.cursor = 'pointer';
+url+=queryString;
+}
+xmlHttpRequest.open(methodType,url,true);
+xmlHttpRequest.send();
+} //"GET" part ends here
 
-next = allH3[i].nextElementSibling;
-next.hidden = true;
+if(methodType=="POST")
+{
+var xmlHttpRequest = new XMLHttpRequest();
+xmlHttpRequest.onreadystatechange = function(){
+if(this.readyState==4)
+{
+if(this.status==200)
+{
+var responseData = this.responseText;
+if(onSuccess) onSuccess(responseData);
+}
+else
+{
+if(onFailure) onFailure();
+}
+}
+};
 
-i++;
+
+let jsonData = {};
+if(jsonObject["data"])
+{
+jsonData = jsonObject["data"];
 }
 
+if((typeof jsonObject["sendJSON"])!=="boolean") throw "sendJSON property should be of boolean type in call to ajax";
 
+if(jsonObject["sendJSON"]==true)
+{
+xmlHttpRequest.open("POST",url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/json");
+xmlHttpRequest.send(JSON.stringify(jsonData));
+}
+else if(jsonObject["sendJSON"]==false || jsonObject["sendJSON"]==undefined)
+{
+//make queryString
+var queryString = "";
+var qsName;
+var qsValue;
+var xx=0;
+for(k in jsonData)
+{
+if(xx>0) queryString+="&";
+xx++;
+qsName = encodeURI(k);
+qsValue = encodeURI(jsonData[k]);
+queryString = queryString + qsName + "=" + qsValue;
+}
+else
+{
+throw "some problem in sendJSON property";
 }
 
+xmlHttpRequest.open("POST",url,true);
+xmlHttpRequest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+xmlHttpRequest.send(queryString);
+}
+
+}
+}//end of $$$.ajax function
+
+//code from eg4.html ends
 
 
-//TMJRock code ends here
-//TMJRock user script starts here
-$$$.onDocumentLoaded(function(){
-$$$.toAccordian("mymy");
+
+
+//TMJRock library code ends here
+
+
+function populateDesignations()
+{
+
+$$$.ajax({
+"url":"servletOne",
+"methodType":"GET",
+
+"success":function(responseData){
+alert("entered success function");
+responseData = JSON.parse(responseData);
+var designations = responseData.data;
+$$$("designationCode").fillComboBox({
+"dataSource":designations,
+"text":"title",
+"value":"code",
+"firstOption": {
+"text":"<Select Designation>",
+"value":"-1"
+}
 });
-
-
-$$$.onDocumentLoaded(function(){
-$$$.toAccordian('youryour');
+},
+"failure":function(){
+alert("entered failure function");
+alert("some problem");
+}
 });
+}
 
-
+window.addEventListener('load',populateDesignations);
 </script>
 </head>
 
 <body>
-<div id='mymy'>
-<h3>Heading 1</h3>
-<div>
-Content 1 Content 1 Content 1 Content 1 Content 1<br>
-Content 1 Content 1 Content 1 Content 1 Content 1<br>
-Content 1 Content 1 Content 1 Content 1 Content 1<br>
-Content 1 Content 1 Content 1 Content 1 Content 1<br>
-Content 1 Content 1 Content 1 Content 1 Content 1<br>
-Content 1 Content 1 Content 1 Content 1 Content 1<br>
-</div>
-
-<h3>Heading 2</h3>
-<div>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-Content 2 Content 2 Content 2 Content 2 Content 2<br>
-</div>
-
-<h3>Heading 3</h3>
-<div>
-Content 3 Content 3 Content 3 Content 3 Content 3<br>
-Content 3 Content 3 Content 3 Content 3 Content 3<br>
-Content 3 Content 3 Content 3 Content 3 Content 3<br>
-</div>
-
-</div> <!--end of 'mymy'-->
-
-<div id='youryour'>
-<h3>New Heading 1</h3>
-<div>
-<span>Span 1</span>
-<span>Span 2</span>
-</div>
-
-<h3>New Heading 2</h3>
-<div>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-</div>
-
-<h3>New Heading 3</h3>
-<div>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-</div>
-
-<h3>New Heading 4</h3>
-<div>
-Content 2 Content 2 Content 2 <br>
-</div>
-
-<h3>New Heading 5</h3>
-<div>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-Content 2 Content 2 Content 2 <br>
-</div>
+Designations: 
+<select id='designationCode'>
+</select>
+<br>
+<a href='/TMJRock/index.html'>Home</a><br><br>
 
 
-</div>
+
 
 
 </body>
