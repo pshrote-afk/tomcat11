@@ -193,7 +193,7 @@ td = document.createElement("td");
 anchor = document.createElement("a");
 anchor.onclick = createPageChangeFunction(this,startFrom-1);
 anchor.href='javascript:void(0)';
-anchor.innerHTML = "prev";
+anchor.text = "prev";
 td.appendChild(anchor);
 tr.appendChild(td);
 }
@@ -201,12 +201,18 @@ tr.appendChild(td);
 for(let i=startFrom;i<=endAt;i++) 
 {
 td = document.createElement("td");
+if(this.pageNumber==i) 
+{
+td.innerHTML = "<b>"+i+"</b>";
+}
+else
+{
 anchor = document.createElement("a");
 anchor.onclick = createPageChangeFunction(this,i);
 anchor.href='javascript:void(0)';
-if(this.pageNumber==i) anchor.innerHTML = "<b>"+i+"</b>";
-else anchor.innerHTML = i;
+anchor.text = i;
 td.appendChild(anchor);
+}
 tr.appendChild(td);
 }
 
@@ -216,7 +222,7 @@ td = document.createElement("td");
 anchor = document.createElement("a");
 anchor.onclick = createPageChangeFunction(this,endAt+1);
 anchor.href='javascript:void(0)';
-anchor.innerHTML = "next";
+anchor.text = "next";
 td.appendChild(anchor);
 tr.appendChild(td);
 }
