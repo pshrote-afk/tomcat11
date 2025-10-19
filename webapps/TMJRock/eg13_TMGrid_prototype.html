@@ -9,15 +9,16 @@
 {
 overflow-x:hidden;
 overflow-y:hidden;
+width:300px !important;
 }
 
 .tmjrock_tmgrid_body_division
 {
-overflow-x:auto;
-overflow-y:auto;
+overflow-x:scroll;
+overflow-y:scroll;
+width:300px;
 height:300px;
 }
-
 
 .tmjrock_tmgrid_head
 {
@@ -26,6 +27,7 @@ border-bottom:0px;
 border-spacing:0px;
 border-collapse:collapse;
 background:lightgray;
+width:750px;
 }
 .tmjrock_tmgrid_head td
 {
@@ -43,7 +45,7 @@ text-align:left;
 }
 .tmjrock_tmgrid_head td+td+td
 {
-width:150px;
+width:200px;
 text-align:left;
 }
 .tmjrock_tmgrid_head td+td+td+td
@@ -62,6 +64,7 @@ text-align:left;
 border:1px groove green;
 border-spacing:0px;
 border-collapse:collapse;
+width:750px;
 }
 .tmjrock_tmgrid_body td
 {
@@ -76,7 +79,7 @@ text-align:left;
 }
 .tmjrock_tmgrid_body td+td+td
 {
-width:150px;
+width:200px;
 text-align:left;
 }
 .tmjrock_tmgrid_body td+td+td+td
@@ -304,10 +307,10 @@ window.addEventListener('load',loader);
 <style>
 .someClass
 {
-width:800px;
+width:900px;
 height:600px;
 border:1px solid red;
-overflow:hidden;
+overflow:auto;
 }
 </style>
 
@@ -316,7 +319,7 @@ overflow:hidden;
 <body>
 
 <div class='someClass'>
-<div class='tmjrock_tmgrid_header_division'>
+<div class='tmjrock_tmgrid_header_division' style='width:300px;overflow-x:hidden;'>	<!-- using inline css to override and allow header table to shrink to 300px while still having scroll. For un-trackable reason it is not responding to css class. Potential reason: 2 <style> blocks -->
 <table class='tmjrock_tmgrid_head'>
 <tr>
 <td>S.No.</td>
