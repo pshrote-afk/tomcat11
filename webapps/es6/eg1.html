@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<title>ES6 Examples></title>
+<script>
+var v = {
+"k":"2000"
+};
+function justDoIt1()
+{
+var m = v.k || function(){
+return 7070;
+};
+alert(m);
+}
+
+
+function justDoIt2()
+{
+
+var a = (p,q) => {
+return p*q;
+}
+var b = (p,q) => p+q;
+
+alert(a(10,20));
+alert(b(10,20));
+}
+
+function sam(a=10,b=20,c=30)
+{
+alert(a+","+b+","+c);
+}
+function justDoIt3()
+{
+sam(1000,2000,3000);
+sam(1000,undefined,3000);
+sam(1000,2000);
+sam(1000);
+sam();
+}
+
+function tom(a,b,c)
+{
+alert(a+","+b+","+c);
+}
+function justDoIt4()
+{
+var a = [10,20,30];
+tom(...a);
+}
+
+function veryCool(...a)
+{
+alert(a);
+}
+function justDoIt5()
+{
+veryCool(10,20,30)
+}
+
+function justDoIt6()
+{
+//IIFE - Immediately Invoked Function Expression
+(function(k)
+{
+alert(k);
+})(10);
+}
+
+
+function whatIsThis()
+{
+return [7999,8999,9999];
+}
+function justDoIt7()
+{
+var [a,b,c] = whatIsThis();
+alert(a+","+b+","+c);
+
+var [p,,q] = whatIsThis();
+alert(p+","+q);
+
+var [,j] = whatIsThis();
+alert(j);
+}
+
+function justDoIt8()
+{
+var b ={
+wattage:60,
+setWattage(w){
+this.wattage = w;
+},
+getWattage(){
+return this.wattage;
+}
+};
+alert(b.wattage);
+alert(b.getWattage());
+b.setWattage(100);
+alert(b.wattage);
+alert(b.getWattage());
+
+
+}
+
+</script>
+</head>
+<body>
+<button onclick='justDoIt1()'>1</button>
+<button onclick='justDoIt2()'>2</button>
+<button onclick='justDoIt3()'>3</button>
+<button onclick='justDoIt4()'>4</button>
+<button onclick='justDoIt5()'>5</button>
+<button onclick='justDoIt6()'>6</button>
+<button onclick='justDoIt7()'>7</button>
+<button onclick='justDoIt8()'>8</button>
+
+</body>
+</html>
+
+
+
+
