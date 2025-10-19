@@ -89,6 +89,19 @@ text-align:left;
 width:200px;
 text-align:left;
 }
+
+.tmjrock_tmgrid_pagination_division
+{
+margin-top:20px;
+}
+.tmjrock_tmgrid_pagination_division a{
+background-color:red;
+color:white;
+padding:5px 10px;
+text-decoration:none;
+text-transform:uppercase;
+}
+
 .tmjrock_tmgrid_pagination td
 {
 width:100px;
@@ -257,6 +270,13 @@ var model = {
 
 function loader()
 {
+var tmjrock_tmgrid_header_division = document.querySelector(".tmjrock_tmgrid_header_division");
+var tmjrock_tmgrid_body_division = document.querySelector(".tmjrock_tmgrid_body_division");
+tmjrock_tmgrid_body_division.addEventListener('scroll',function(){
+tmjrock_tmgrid_header_division.scrollLeft = tmjrock_tmgrid_body_division.scrollLeft;
+});
+
+//initialize dataset
 var students = new Array();	//var students = [];
 
 var student;
