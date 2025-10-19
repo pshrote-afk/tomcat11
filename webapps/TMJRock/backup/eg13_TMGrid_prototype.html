@@ -9,15 +9,16 @@
 {
 overflow-x:hidden;
 overflow-y:hidden;
+width:300px !important;
 }
 
 .tmjrock_tmgrid_body_division
 {
-overflow-x:auto;
-overflow-y:auto;
+overflow-x:scroll;
+overflow-y:scroll;
+width:300px;
 height:300px;
 }
-
 
 .tmjrock_tmgrid_head
 {
@@ -26,6 +27,7 @@ border-bottom:0px;
 border-spacing:0px;
 border-collapse:collapse;
 background:lightgray;
+width:750px;
 }
 .tmjrock_tmgrid_head td
 {
@@ -43,7 +45,7 @@ text-align:left;
 }
 .tmjrock_tmgrid_head td+td+td
 {
-width:150px;
+width:200px;
 text-align:left;
 }
 .tmjrock_tmgrid_head td+td+td+td
@@ -62,6 +64,7 @@ text-align:left;
 border:1px groove green;
 border-spacing:0px;
 border-collapse:collapse;
+width:750px;
 }
 .tmjrock_tmgrid_body td
 {
@@ -76,7 +79,7 @@ text-align:left;
 }
 .tmjrock_tmgrid_body td+td+td
 {
-width:150px;
+width:200px;
 text-align:left;
 }
 .tmjrock_tmgrid_body td+td+td+td
@@ -89,6 +92,19 @@ text-align:left;
 width:200px;
 text-align:left;
 }
+
+.tmjrock_tmgrid_pagination_division
+{
+margin-top:20px;
+}
+.tmjrock_tmgrid_pagination_division a{
+background-color:red;
+color:white;
+padding:5px 10px;
+text-decoration:none;
+text-transform:uppercase;
+}
+
 .tmjrock_tmgrid_pagination td
 {
 width:100px;
@@ -106,7 +122,7 @@ this.paginationTableId = paginationTableId;
 this.students = students;
 this.pageSize = pageSize;
 
-this.pageNumber = 57;
+this.pageNumber = 1;
 this.numberOfPaginationControls = 5;
 
 this.update();
@@ -118,13 +134,7 @@ update()
 var dataTable = document.getElementById(this.dataTableId);
 
 //first remove old entries if any
-var rows = dataTable.querySelectorAll("tr");	// returns a static NodeList		//var rows = dataTable.getElementsByTagName("tr");    returns a live-HTML Collection object
-var row;
-for(var k=0;k<rows.length;k++)
-{
-row = rows[k];
-row.remove();
-}
+while(dataTable.rows.length!=0) dataTable.deleteRow(0);
 
 //add new entries
 var startFromIndex = (this.pageNumber - 1) * this.pageSize;
@@ -159,6 +169,13 @@ dataTable.appendChild(tr);
 }
 updatePagination()
 {
+function createPageChangeFunction(objectAddress,newPageNumber)
+{
+return function(){
+objectAddress.setGridPageNumber(newPageNumber);
+};
+}
+
 var paginationTable = document.getElementById(this.paginationTableId);
 
 
@@ -190,10 +207,9 @@ if(startFrom>1)
 {
 td = document.createElement("td");
 anchor = document.createElement("a");
-anchor.onclick = function(){
-model.grid.setGridPageNumber(startFrom-1);
-};
-anchor.innerHTML = "prev";
+anchor.onclick = createPageChangeFunction(this,startFrom-1);
+anchor.href='javascript:void(0)';
+anchor.text = "prev";
 td.appendChild(anchor);
 tr.appendChild(td);
 }
@@ -201,13 +217,18 @@ tr.appendChild(td);
 for(let i=startFrom;i<=endAt;i++) 
 {
 td = document.createElement("td");
+if(this.pageNumber==i) 
+{
+td.innerHTML = "<b>"+i+"</b>";
+}
+else
+{
 anchor = document.createElement("a");
-anchor.onclick = function(){
-model.grid.setGridPageNumber(i);
-};
-if(this.pageNumber==i) anchor.innerHTML = "<b>"+i+"</b>";
-else anchor.innerHTML = i;
+anchor.onclick = createPageChangeFunction(this,i);
+anchor.href='javascript:void(0)';
+anchor.text = i;
 td.appendChild(anchor);
+}
 tr.appendChild(td);
 }
 
@@ -215,10 +236,9 @@ if(endAt<totalNumberOfPages)
 {
 td = document.createElement("td");
 anchor = document.createElement("a");
-anchor.onclick = function(){
-model.grid.setGridPageNumber(endAt+1);
-};
-anchor.innerHTML = "next";
+anchor.onclick = createPageChangeFunction(this,endAt+1);
+anchor.href='javascript:void(0)';
+anchor.text = "next";
 td.appendChild(anchor);
 tr.appendChild(td);
 }
@@ -230,6 +250,7 @@ setGridPageNumber(newPageNumber)
 this.pageNumber = newPageNumber;
 this.update();
 this.updatePagination();
+return false;		//returning false for function called by 'onclick' ensures that request is not sent for attribute of 'href'
 }
 
 } //end of Grid
@@ -252,6 +273,13 @@ var model = {
 
 function loader()
 {
+var tmjrock_tmgrid_header_division = document.querySelector(".tmjrock_tmgrid_header_division");
+var tmjrock_tmgrid_body_division = document.querySelector(".tmjrock_tmgrid_body_division");
+tmjrock_tmgrid_body_division.addEventListener('scroll',function(){
+tmjrock_tmgrid_header_division.scrollLeft = tmjrock_tmgrid_body_division.scrollLeft;
+});
+
+//initialize dataset
 var students = new Array();	//var students = [];
 
 var student;
@@ -265,7 +293,8 @@ student.nameOfFather = i + " Father";
 students.push(student);
 }
 
-model.grid = new Grid('dataTable','dataTablePagination',students,15);
+let pageSize = 20;
+model.grid = new Grid('dataTable','dataTablePagination',students,pageSize);
 
 
 }
@@ -278,10 +307,10 @@ window.addEventListener('load',loader);
 <style>
 .someClass
 {
-width:800px;
+width:900px;
 height:600px;
 border:1px solid red;
-overflow:hidden;
+overflow:auto;
 }
 </style>
 
@@ -290,7 +319,7 @@ overflow:hidden;
 <body>
 
 <div class='someClass'>
-<div class='tmjrock_tmgrid_header_division'>
+<div class='tmjrock_tmgrid_header_division' style='width:300px;overflow-x:hidden;'>	<!-- using inline css to override and allow header table to shrink to 300px while still having scroll. For un-trackable reason it is not responding to css class. Potential reason: 2 <style> blocks -->
 <table class='tmjrock_tmgrid_head'>
 <tr>
 <td>S.No.</td>
