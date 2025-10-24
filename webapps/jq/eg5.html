@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<style>
+.xyz
+{
+font-size:20pt;
+color:brown;
+font-weight:bold;
+  
+transform: translateX(-300px); 		/* start left */
+transition: transform 1s cubic-bezier(0.75, -1.1, 0.25, 1.5);
+}
+.xyz.active
+{
+transform: translateX(0); 		/* move right */
+}
+</style>
+<script src = 'jquery/jquery.js'></script>
+<script>
+function $(k)
+{
+alert('just do it '+k);
+}
+function doSomething()
+{
+jQuery("#button1").css("color","blue");
+}
+jQuery.noConflict();
+
+jQuery(($)=>{
+$("#button2").on('click',function(){
+alert("I am button2");
+});
+$("#button3").on('click',function(){
+$(this).css("color","red");
+});
+$("#button4").on('click',function(){
+$(this).css("font-size","24pt");
+});
+$("#button5").click(function(){
+$("#abcd").toggleClass("active");
+});
+
+$("#mainContainer").click(function(ev){
+if(ev.target==this)
+{
+alert("Main container clicked");
+}
+});
+
+$("#mainContainer2").click(function(ev){
+alert("Main container 2 clicked");
+});
+$("#childContainer2").click(function(ev){
+alert("Child container 2 clicked");
+ev.stopPropagation();
+});
+$("#mmm").click(function(ev){
+alert("mmm clicked");
+ev.stopPropagation();
+});
+$("#button7").click(function(ev){
+alert("button7 clicked");
+ev.stopPropagation();
+});
+
+$("#button8").click(function(ev){
+alert("Form is being submitted w/ value "+$("#nm").val());
+alert($("#nm").val().length);
+if($("#nm").val()==0)
+{
+ev.preventDefault();
+}
+});
+
+$("#d1").click(function(ev){
+if($(ev.target).is("#d1")) alert("d1 clicked");
+if($(ev.target).is("#d2")) alert("d2 clicked");
+if($(ev.target).is("#s1")) alert("s1 clicked");
+});
+
+$("#button9").click(function(){
+alert("Button 9 clicked");
+$("#button10").trigger("click");
+$(this).off("click");
+});
+
+$("#button10").click(function(){
+alert("Button 10 clicked");
+});
+
+
+
+}); //end of doc on load
+
+</script>
+</head>
+<body>
+<button id='button1' type='button' onclick="doSomething()">(1) Click me</button>
+<button id='button2' type='button'>(2) Click me</button>
+<button id='button3' type='button'>(3) Click me</button>
+<button id='button4' type='button'>(4) Click me</button>
+
+<br><br>
+<button id='button5' type='button'>(5) Click me</button>
+<br><div id='abcd' class='xyz'>
+God is great, Ujjain is the city of Gods
+</div>
+<br><br>
+
+<div id='mainContainer'>
+Some matter in main container
+<div id='childContainer'>
+Some matter in child container
+<span id='lmn'>
+<button id='button6' type='button'>(6) Click me</button>
+</span>
+</div>
+</div>
+<br><br>
+
+<div id='mainContainer2'>
+Some matter in main container 2
+<div id='childContainer2'>
+Some matter in child container 2
+<span id='mmm'>
+Cool stuff
+<button id='button7' type='button'>(7) Click me</button>
+</span>
+</div>
+</div>
+<br><br>
+
+<form action='whatever'>
+Enter something <input type='text' id='nm'><br>
+<button id='button8' type='button'>(8) Click me</button>
+</form>
+<br><br>
+
+<div id='d1'>
+Good<br>
+<div id='d2'>
+Bad<br>
+<span id='s1'>Ugly</span>
+</div>
+</div>
+<br><br>
+
+<button id='button9' type='button'>(9) Click me</button>
+<button id='button10' type='button'>(10) Click me</button>
+
+
+</body>
+</html>
+

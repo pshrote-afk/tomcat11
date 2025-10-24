@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<style>
+.cool
+{
+color:pink;
+}
+</style>
+
+<script src = 'jquery/jquery.js'></script>
+<script>
+function great()
+{
+alert('JQuery is cool');
+alert(document.getElementById("xyz"));
+}
+$(great);
+</script>
+
+<script>
+function doSomething()
+{
+$(".cool").css("font-size","24pt");
+$("span").css("border","1px solid red");
+$("#abc").css("background","yellow");
+}
+$(doSomething);
+
+$(()=>{
+$(".cool").css("font-size","24pt");
+$("span").css("border","3px solid magenta");
+$("#abc").css("background","green");
+$("#abc").css("color","yellow");
+});
+
+</script>
+
+</head>
+<body>
+<div id='xyz'>
+Cool JQuery
+</div>
+
+<span class='cool'>God</span><br>
+<span>is</span><br>
+<span id='abc'>Great</span><br>
+<span class='cool'>Ujjain is the city of Gods</span><br>
+
+<script>
+alert('Cool Stuff');
+</script>
+</body>
+
+</html>
+

@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<style>
+.cool
+{
+color:magenta;
+}
+.hot
+{
+color:red;
+}
+.superCool
+{
+font-size:40pt;
+}
+.superSmallCool
+{
+font-size:12pt;
+}
+</style>
+<script src = 'jquery/jquery.js'></script>
+<script>
+$(()=>{
+$("#someSection > div").addClass("cool");
+$("#someSection div:not('.cool')").addClass("hot");
+$('#someSection div.cool').addClass('superCool');
+$("#someSection div.hot").addClass("superSmallCool");
+
+$("input[tmtm]").css("color","blue");
+$("input[tmtm=ok]").css("font-size","24pt");
+$("input[tmtm=good]").css("font-size","40pt");
+$("input[tmtm^=good]").css("font-size","25pt");
+$("input[tmtm$=dog]").css("font-size","5pt");
+
+$("li:even").css("color","magenta");
+$("li:odd").css("color","green");
+$("li:nth-child(3)").css("color","brown");
+});
+</script>
+</head>
+<body>
+<div id='someSection'>
+<div>
+What is this
+<div>
+This is that
+</div>
+</div>
+
+
+<div>
+What to do?
+<div>
+No need to do anything
+</div>
+</div>
+
+<input type='text' tmtm='ok' value='one'><br>
+<input type='text' value='two'><br>
+<input type='text' tmtm='good' value='three'><br>
+<input type='text' tmtm='good boy' value='four'><br>
+<input type='text' tmtm='good dog' value='five'><br>
+<input type='text' value='six'><br>
+
+<ul>
+<li>Ujjain</li>
+<li>Indore</li>
+<li>Goa</li>
+<li>Mumbai</li>
+</body>
+</html>
+
