@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<script src = 'jquery/jquery.js'></script>
+<style>
+.xyz
+{
+margin-left:100px;
+margin-top:200px;
+}
+</style>
+<script>
+$(()=>{
+$("#button1").click(function(){
+$("#d1").animate({"margin-top":"0px","opacity":"50%"},"slow")
+	.animate({"margin-left":"0px"},{"duration":"slow",queue:false})
+	.queue(function(xx){
+		alert('great');
+		xx();
+		})
+	.hide("slow");
+
+
+});
+
+
+});
+</script>
+</head>
+<body>
+<div id='d1' class='xyz'>
+Something something something something something<br>
+Something something something something something<br>
+Something something something something something<br>
+Something something something something something<br>
+Something something something something something<br>
+</div>
+<button id='button1' type='button'>Click me</button>
+
+</body>
+</html>
+
