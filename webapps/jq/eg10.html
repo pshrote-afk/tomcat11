@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<script src = 'jquery/jquery.js'></script>
+<script>
+$(()=>{
+$("<b>Check1</b>").appendTo("body");
+$("<b>Check2</b>").prependTo("body");
+$("<b>Check3</b>").insertAfter("body");
+$("<b>Check4</b>").insertBefore("body");
+
+console.log($("input").attr("checked")); // "checked"
+console.log($("input").prop("checked")); // true
+
+$("input").prop("checked", false);
+console.log($("input").attr("checked")); // still "checked"
+console.log($("input").prop("checked")); // now false
+
+});
+
+$(()=>{
+let r = $("#goToTop");
+let anchor = $("<a>");
+anchor.text("Go to top");
+anchor.attr("href","#top");
+r.append(anchor);
+});
+
+</script>
+</head>
+<body>
+<span id='top'></span>
+Check
+<br><br><br>
+<input type="checkbox" checked>
+<br><br><br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+Something something<br>
+
+<div id='goToTop'></div>
+</body>
+</html>
+
