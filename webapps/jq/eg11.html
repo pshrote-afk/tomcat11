@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<script src = 'jquery/jquery.js'></script>
+<script>
+$(()=>{
+$("#button1").on("click",getWithoutData());
+
+$("#button2").click(getWithData(160));
+
+$("#button3").click(postWithData());
+
+
+});
+
+function getWithoutData()
+{
+return function(){
+$.ajax({
+"url":"servletOne",
+"type":"GET",
+success: function(data){
+let designations = data;	//setContentType("application/json") ---> in servlet
+alert("type of designations:" + typeof(designations));
+alert(designations);
+
+let row;
+let t = $("<table>");
+t.appendTo("body");
+for(let k=0;k<designations.length;k++)
+{
+row = $("<tr>")
+$("<td>").text(designations[k].code).appendTo(row);
+$("<td>").text(designations[k].title).appendTo(row);
+t.append(row);
+}
+}
+});
+}
+}//end of getWithoutData
+
+function getWithData(code)
+{
+return function(){
+$.ajax({
+"url":"servletTwo",
+"type":"GET",
+data:{"code":code},
+success: function(data){
+let designations = data;	//setContentType("application/json") ---> in servlet
+alert("type of designations:" + typeof(designations));
+let row;
+let t = $("<table border='1'>");
+t.appendTo("body");
+row = $("<tr>")
+$("<td>").text(designations.code).appendTo(row);
+$("<td>").text(designations.title).appendTo(row);
+t.append(row);
+}
+});
+}
+}//end of getWithData
+
+function postWithData()
+{
+return function(){
+var firstName = $("#firstName").val();
+var lastName = $("#lastName").val();
+var age = $("#age").val();
+var customer = {
+"firstName":firstName,
+"lastName":lastName,
+"age":age
+};
+$.ajax({
+"url":"servletThree",
+"type":"POST",
+"data":JSON.stringify(customer),
+success: function(data){
+var customer = data
+var a = "First name: " + customer.firstName + "<br>";
+a = a + "Last name: " + customer.lastName + "<br>";
+a = a + "Age: " + customer.age;
+$("body").append(a);
+}
+});
+}
+} //end of postWithData
+</script>
+</head>
+<body>
+<button type='button' id='button1'>Get w/o data</button>
+
+<br><br>
+<button type='button' id='button2'>Get w data</button>
+
+<br><br>
+<button type='button' id='button3'>Put w/ data</button>
+Enter first name: <input type='text' id='firstName'><br>
+Enter last name: <input type='text' id='lastName'><br>
+Enter age: <input type='text' id='age'><br>
+
+</body>
+</html>
+
