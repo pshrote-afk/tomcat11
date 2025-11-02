@@ -103,6 +103,9 @@ alert(error.message)
 });
 }
 });
+
+$("#prevMonthButton").button();
+$("#nextMonthButton").button();
 }
 function initFormValidation()
 {
@@ -180,41 +183,43 @@ reloadMonthGrid();
 function updateNextAndPreviousMonthButton()
 {
 //done done
-let curr = $('#monthSelector').val();
+let curr = parseInt($('#monthSelector').val());
 let prev = curr - 1;
 let next = curr + 1;
-
 $("#prevMonthButton").off("click")
 		     .on("click",function(){
 if(prev==0) //means current month is January, which is 1. //corner case: month=January, year=2025. Therefore, prevMonthButton should take us to month=December, year=2024
 {
 prev = 12;
-let currYear = $("#yearSelector").val();
-let prevYear = currYear - 1;
-$("#yearSelector").val(prevYear).selectmenu("refresh");					//change, value, and refresh yearSelector to display the changed year value
+let currentYear = parseInt($("#yearSelector").val());
+let prevYear = currentYear - 1;
+$("#yearSelector").val(prevYear).selectmenu("refresh");					//refresh yearSelector to display the changed year value
 $("#monthSelector").val(prev).selectmenu("refresh").trigger("selectmenuchange");	//trigger selectmenuchange only once, as that will update monthGrid
 }
 else 
 {
 $("#monthSelector").val(prev).selectmenu("refresh").trigger("selectmenuchange");
 }
-}); 
+});
 
 $("#nextMonthButton").off("click")
 		     .on("click",function(){
-if(next==13) //means current month is December, which is 12. //corner case: month=December, year=2025. Therefore, nextMonthButton should take us to month=January, year=2026
+if(next==13) //means current month is January, which is 1. //corner case: month=December, year=2025. Therefore, nextMonthButton should take us to month=January, year=2026
 {
 next = 1;
-let currYear = $("#yearSelector").val();
-let nextYear = currYear + 1;
-$("#yearSelector").val(nextYear).selectmenu("refresh");					//change value, and refresh yearSelector to display the changed year value
-$("#monthSelector").val(next).selectmenu("refresh").trigger("selectmenuchange");	//trigger selectmenuchange only once, as that will update monthGrid
+let currentYear = parseInt($("#yearSelector").val());
+let nextYear = currentYear + 1;
+$("#yearSelector").val(nextYear).selectmenu("refresh");
+$("#monthSelector").val(next).selectmenu("refresh").trigger("selectmenuchange");
 }
 else 
 {
 $("#monthSelector").val(next).selectmenu("refresh").trigger("selectmenuchange");
 }
 }); 
+
+console.log(new Error().stack);
+alert(prev + "," + curr + "," + next);
 //done done
 
 }
@@ -297,8 +302,11 @@ initCalendarContainer();
 </select>
 <select id='yearSelector' name='yearSelector'>
 <option disabled="" selected="">Year</option>
+<option value="2024">2024</option>
 <option value="2025">2025</option>
 <option value="2026">2026</option>
+<option value="2027">2027</option>
+<option value="2028">2028</option>
 </select>
 <span id="nextMonthButton" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-caret-1-e"></span></span>
 <br><br>
