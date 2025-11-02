@@ -106,6 +106,15 @@ alert(error.message)
 
 $("#prevMonthButton").button();
 $("#nextMonthButton").button();
+
+$("#todayButton").button();
+$("#todayButton").on("click",function(){
+let now = new Date();
+let month = now.getMonth() + 1;
+let year = now.getFullYear();
+$("#yearSelector").val(year).selectmenu("refresh");					
+$("#monthSelector").val(month).selectmenu("refresh").trigger("selectmenuchange");	
+});
 }
 function initFormValidation()
 {
@@ -182,7 +191,6 @@ reloadMonthGrid();
 
 function updateNextAndPreviousMonthButton()
 {
-//done done
 let curr = parseInt($('#monthSelector').val());
 let prev = curr - 1;
 let next = curr + 1;
@@ -217,10 +225,6 @@ else
 $("#monthSelector").val(next).selectmenu("refresh").trigger("selectmenuchange");
 }
 }); 
-
-console.log(new Error().stack);
-alert(prev + "," + curr + "," + next);
-//done done
 
 }
 
@@ -309,6 +313,7 @@ initCalendarContainer();
 <option value="2028">2028</option>
 </select>
 <span id="nextMonthButton" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-caret-1-e"></span></span>
+<span id="todayButton" class="ui-state-default ui-corner-all" style="float:right">Today</span>
 <br><br>
 
 <div id='monthCalendarContainer'>
