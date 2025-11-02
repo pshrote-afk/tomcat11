@@ -1,0 +1,310 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<link rel="stylesheet" href="jquery/jquery-ui-humanity-theme/jquery-ui.css">
+<link rel="stylesheet" href="jquery/jquery-ui-humanity-theme/jquery-ui.structure.css">
+<link rel="stylesheet" href="jquery/jquery-ui-humanity-theme/jquery-ui.theme.css">
+<style>
+label.error
+{
+color:red;
+font-size:10pt;
+font-family:monospace;
+padding:5px;
+}
+.monthGrid {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: sans-serif;
+  text-align: center;
+}
+.monthGrid td {
+  height: 80px;
+  width: 160px;
+  vertical-align: top;
+  text-align:left;
+}
+</style>
+
+<script src = 'jquery/jquery.js'></script>
+<script src = 'jquery/jquery-ui-humanity-theme/jquery-ui.js'></script>
+<script src = 'jquery/jquery-validation/jquery.validate.js'></script>
+<script>
+function initNewEventDialog()
+{
+$("#newEventDialog").dialog({
+modal:true,
+autoOpen: false,
+width:"450px",
+      show: {
+        effect: "blind",
+        duration: 1000
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
+    });
+}
+
+function initDatePicker()
+{
+$("#datepicker").datepicker(
+{
+dateFormat:"yy-mm-dd",
+showButtonPanel:true,
+showWeek:true,
+showOtherMonths:false,
+selectOtherMonths:false,
+minDate: -45,		//to limit to events within the semester
+maxDate: "+0M 45D"
+});
+}
+function initRadioButtons()
+{
+$("#radio1, #radio2").checkboxradio();
+}
+
+function initButtonEvents()
+{
+$('#openNewEventDialog').button();
+$("#openNewEventDialog").on( "click", function(){
+	$("#newEventDialog").dialog("open");
+});
+
+$('#addEventButton').button();
+$('#addEventButton').on("click",function(){
+if($('#newEventForm').valid())		// .valid() is important. JQueryValidation
+{
+$.ajax({
+url:"addEvent",
+type:"POST",
+data:$('#newEventForm').serialize(),
+success:function(result){
+result = JSON.parse(result);
+
+$("<p>")
+.text(result.message)
+.dialog({
+modal:true,
+beforeClose:function(){
+$("#newEventDialog").dialog("close");
+document.getElementById("newEventForm").reset();
+reloadMonthGrid();
+}
+});
+},
+error:function(error){
+error = JSON.parse(error);
+alert(error.message)
+}
+});
+}
+});
+}
+function initFormValidation()
+{
+//add custom function to check ensure date is within pre-defined range
+$.validator.addMethod("dateRange",(value,element)=>{
+if(!value) return false;
+let date = $(element).datepicker("getDate");
+if(!date) return false;				// null is returned if date is not in correct format
+
+const minDate = $.datepicker._determineDate(null,$(element).datepicker("option","minDate"),new Date());
+const maxDate = $.datepicker._determineDate(null,$(element).datepicker("option","maxDate"),new Date()); 	//null just tells it: “don’t try to read options from an instance; just use the value I’m giving you.”
+
+return !(date < minDate || date > maxDate);
+});
+
+$('#newEventForm').validate({
+rules:{
+title:{required:true,minlength:3},
+datepicker:{required:true,dateRange:true},
+venue:{required:true},
+startTime:{required:true},
+endTime:{required:true},
+description:{required:true,minlength:5},
+outsiders:{required:true},
+committee:{required:true}
+},
+messages:{
+title:{required:"Enter a title",minlength:"Title must be atleast 3 characters"},
+datepicker:{required:"Select a date",dateRange:"Select date in given range only"},
+venue:"Enter venue",
+startTime:"Select start time",
+endTime:"Select end time",
+description:{required:"Enter description",minlength:"Description must be atleast 5 characters"},
+outsiders:"Select yes or no",
+committee:"Enter committee"
+},
+errorPlacement:function(error,element){
+$("#"+element.attr("name")+"ErrorSection").html(error);		//error is actually a reference to a label which has error text message. 
+}								//it has "error" class
+
+});
+}
+function initSelectMenus()
+{
+$("#committee").selectmenu();
+$("#monthSelector").selectmenu();
+$("#yearSelector").selectmenu();
+$("#monthSelector").on("selectmenuchange",function(){
+reloadMonthGrid();
+updateNextAndPreviousMonthButton();
+});
+$("#yearSelector").on("selectmenuchange",function(){
+reloadMonthGrid();
+updateNextAndPreviousMonthButton();
+});
+}
+function initMonthAndYearSelector()
+{
+let now = new Date();
+let month = now.getMonth() + 1;
+let year = now.getFullYear();
+$('#monthSelector').val(month).selectmenu('refresh');
+$('#yearSelector').val(year).selectmenu('refresh');
+updateNextAndPreviousMonthButton();		//initalize prev and next buttons
+}
+
+function reloadMonthGrid(){};	// empty declaration to stop interpreter screaming 'reloadMonthGrid function undefined'
+
+function initCalendarContainer()
+{
+$("#monthCalendarContainer").load("GetMonthGrid.html");
+reloadMonthGrid();
+}
+
+function updateNextAndPreviousMonthButton()
+{
+//done done
+let curr = $('#monthSelector').val();
+let prev = curr - 1;
+let next = curr + 1;
+
+$("#prevMonthButton").off("click")
+		     .on("click",function(){
+if(prev==0) //means current month is January, which is 1. //corner case: month=January, year=2025. Therefore, prevMonthButton should take us to month=December, year=2024
+{
+prev = 12;
+let currYear = $("#yearSelector").val();
+let prevYear = currYear - 1;
+$("#yearSelector").val(prevYear).selectmenu("refresh");					//change, value, and refresh yearSelector to display the changed year value
+$("#monthSelector").val(prev).selectmenu("refresh").trigger("selectmenuchange");	//trigger selectmenuchange only once, as that will update monthGrid
+}
+else 
+{
+$("#monthSelector").val(prev).selectmenu("refresh").trigger("selectmenuchange");
+}
+}); 
+
+$("#nextMonthButton").off("click")
+		     .on("click",function(){
+if(next==13) //means current month is December, which is 12. //corner case: month=December, year=2025. Therefore, nextMonthButton should take us to month=January, year=2026
+{
+next = 1;
+let currYear = $("#yearSelector").val();
+let nextYear = currYear + 1;
+$("#yearSelector").val(nextYear).selectmenu("refresh");					//change value, and refresh yearSelector to display the changed year value
+$("#monthSelector").val(next).selectmenu("refresh").trigger("selectmenuchange");	//trigger selectmenuchange only once, as that will update monthGrid
+}
+else 
+{
+$("#monthSelector").val(next).selectmenu("refresh").trigger("selectmenuchange");
+}
+}); 
+//done done
+
+}
+
+$(()=>{
+initNewEventDialog();
+initDatePicker();
+initRadioButtons();
+initButtonEvents();
+initFormValidation();
+initSelectMenus();
+initMonthAndYearSelector();
+initCalendarContainer();
+
+});
+
+
+
+</script>
+</head>
+<body>
+<br>
+<button id="openNewEventDialog">
+<span class="ui-icon ui-icon-circlesmall-plus" style='scale:1.75'></span> Add Event</button>
+
+<div id='newEventDialog' name='Create New Event'>
+<form id='newEventForm'>
+<span>Title: <input type='text' id='title' name='title'></span><span id='titleErrorSection'></span><br><br>
+<span>Date: <input type='text' id='datepicker' name='datepicker'></span><span id='datepickerErrorSection'></span><br><br>
+<span>Venue: <input type='text' id='venue' name='venue'></span><span id='venueErrorSection'></span><br><br>
+<span>Start Time: <input type='time' id='startTime' name='startTime'></span><span id='startTimeErrorSection'></span><br><br>
+<span>End Time: <input type='time' id='endTime' name='endTime'></span><span id='endTimeErrorSection'></span><br><br>
+<span>Description: <textarea id='description' name='description' style="width:100%"></textarea><span id='descriptionErrorSection'></span>
+
+<span>
+
+<fieldset>
+    <legend><h6>Open For Outsiders: </h6></legend>
+	<input type="radio" id="radio1" name="outsiders" value="true">
+	<label for="radio1">Yes</label>
+	<input type="radio" id="radio2" name="outsiders" value="false">
+	<label for="radio2">No</label>
+<br>
+<span id='outsidersErrorSection'></span>
+  </fieldset><br><br>
+</span>
+
+<span>Organising Committee: </span>
+<select id='committee' name='committee'>
+      <option disabled="" selected="">Select</option>
+      <option value='1'>COMSA</option>
+      <option value='2'>Dance Club</option>
+      <option value='3'>Robotics Club</option>
+      <option value='4'>Oratory Club</option>
+      <option value='5'>Coding Club</option>
+</select>
+</span><span id='committeeErrorSection'></span><br><br>
+
+</form>
+<button type='button' id='addEventButton'><span class="ui-icon ui-icon-circle-plus"></span>  Add Event</button>
+</div>
+
+<!--Table implementation starts-->
+<br><br>
+<span id="prevMonthButton" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-caret-1-w"></span></span>
+<select id='monthSelector' name='monthSelector'>
+<option disabled="" selected="">Month</option>
+<option value="1">January</option>
+<option value="2">February</option>
+<option value="3">March</option>
+<option value="4">April</option>
+<option value="5">May</option>
+<option value="6">June</option>
+<option value="7">July</option>
+<option value="8">August</option>
+<option value="9">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option>
+</select>
+<select id='yearSelector' name='yearSelector'>
+<option disabled="" selected="">Year</option>
+<option value="2025">2025</option>
+<option value="2026">2026</option>
+</select>
+<span id="nextMonthButton" class="ui-state-default ui-corner-all"><span class="ui-icon ui-icon-caret-1-e"></span></span>
+<br><br>
+
+<div id='monthCalendarContainer'>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="jquery/jquery-ui-humanity-theme/jquery-ui.css">
+<link rel="stylesheet" href="jquery/jquery-ui-humanity-theme/jquery-ui.structure.css">
+<link rel="stylesheet" href="jquery/jquery-ui-humanity-theme/jquery-ui.theme.css">
+<script src = 'jquery/jquery.js'></script>
+<script src = 'jquery/jquery-ui-humanity-theme/jquery-ui.js'></script>
+<script src = 'jquery/jquery-validation/jquery.validate.js'></script>
+<script>
+$( function() {
+$("[name='anchor1']").tooltip({
+track: true,
+content: function(){
+return $('#tooltip1').html();
+}
+    });
+  } );
+</script>
+</head>
+<body>
+
+<a name="anchor1" title=" " href="javascript:void(0)" title=" ">Details</a>
+
+
+<h6 name="anchor1" title="">Hello I am Heading 6</h6>
+
+<div id="tooltip1" style="display:none; font-family:Segoe UI, sans-serif; font-size:13px; color:#222;" 
+class="ui-widget ui-front ui-widget-content ui-corner-all ui-widget-shadow">
+  <div style="font-weight:600; font-size:14px; margin-bottom:6px;">Event Details</div>
+  <div style="margin-bottom:4px;"><strong>Date:</strong> Nov 2, 2025</div>
+  <div style="margin-bottom:4px;"><strong>Start time:</strong> 12:03 PM</div>
+  <div style="margin-bottom:4px;"><strong>End time:</strong> 1:03 PM</div>
+  <div style="margin-bottom:4px;"><strong>Venue:</strong> riejoirejo</div>
+  <div style="margin-bottom:6px; line-height:1.4;">
+    <strong>Description:</strong><br>
+    koefkwpokfwek owekk opfwek ofpwkekokopwkeo kwpoek woek fopwekfowkefpowekpf wepofk koefkwpokfwek owekk opfwek ofpwkekokopwkeo kwpoek woek fopwekfowkefpowekpf wepofk
+  </div>
+  <div style="margin-bottom:4px;"><strong>Open for outsiders:</strong> Yes</div>
+  <div><strong>Organising committee:</strong> ORATORY CLUB</div>
+</div>
+
+
+<div id="eventDetailsTooltip" style="display:none; font-family:Segoe UI, sans-serif; font-size:13px; color:#222;" 
+class="ui-widget ui-front ui-widget-content ui-corner-all ui-widget-shadow">
+  <div style="font-weight:600; font-size:14px; margin-bottom:6px;">Event Details</div>
+  <div style="margin-bottom:4px;"><strong>Date:</strong></div>
+  <div style="margin-bottom:4px;"><strong>Start time:</strong></div>
+  <div style="margin-bottom:4px;"><strong>End time:</strong></div>
+  <div style="margin-bottom:4px;"><strong>Venue:</strong></div>
+  <div style="margin-bottom:6px; line-height:1.4;"><strong>Description:</strong><br></div>
+  <div style="margin-bottom:4px;"><strong>Open for outsiders:</strong></div>
+  <div><strong>Organising committee:</strong></div>
+</div>
+
+
+</body>
+</html>
+
