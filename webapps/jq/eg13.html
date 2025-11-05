@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<script src = 'jquery/jquery.js'></script>
+<script>
+function cooldown(number)
+{
+var prm = new Promise(function(resolve,reject){
+
+setTimeout(function(){
+if(number==0)
+{
+reject("Number is in coolest form "+number);
+return;
+}
+number = number/2;
+resolve(number);
+
+},1500);
+
+});
+return prm;
+}
+
+$(()=>{
+$('#button1').click(function(){
+var x = 100;	//var x = 5;
+cooldown(x).then(function(results){
+alert(x+" cooled down to "+results);
+},function(error){
+alert(error);
+});
+});
+});
+
+//button2 starts here
+function processData()
+{
+var prm = new Promise(function(resolve,reject){
+$.ajax({
+url:"servletFour",
+type:"POST",
+data:$("#userForm").serialize(),
+success:function(data){
+resolve(data);
+},
+error:function(error){
+reject(error);
+}
+});
+});
+
+return prm;
+}
+
+$(()=>{
+
+$("#button2").on("click",function(){
+processData().then(function(results){
+let name = results.message.name;
+let age = results.message.age;
+alert(name+","+age);
+},function(error){
+console.log(error);
+alert(error.status+","+error.statusText);
+});
+});
+});
+</script>
+</head>
+<body>
+<button type='button' id='button1'>Promise button</button><br><br>
+<form id='userForm'>
+Enter name<input id='name' name='name'><br>
+Enter age<input id='age' name='age'><br>
+</form>
+<button type='button' id='button2'>Promise button w/ AJAX call</button>
+</body>
+</html>
+

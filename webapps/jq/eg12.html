@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html lang = 'en'>
+<head>
+<meta charset='utf-8'>
+<title>JQuery Examples</title>
+<script src = 'jquery/jquery.js'></script>
+<script>
+$(document).ajaxStart(function() {
+  $("#loader").show();   // runs when first AJAX starts
+});
+
+$(document).ajaxStop(function() {
+  $("#loader").hide();   // runs when all AJAX calls complete
+});
+
+$(()=>{
+$("#sendButton").click(function(){
+$.ajax({
+url:"servletFour",
+type:"POST",
+data:$("#userForm").serialize(),
+success:function(data){
+console.log(data);
+console.log(data.message);
+alert(data.message.name+","+data.message.age);
+}
+});
+});
+});
+
+
+$(()=>{
+$("#button1").click(function(){
+$("#fragment1").load("eg1.html");
+});
+$("#button2").click(function(){
+$("#fragment2").load("eg2.html");
+});
+$("#button3").click(function(){
+$("#fragment3").load("eg3.html");
+});
+
+});
+
+</script>
+</head>
+<body>
+<form id='userForm'>
+Enter first name: <input name="name" id="name" length='4'><br>
+Enter first age: <input name="age" id="age" length=><br>
+<button type='button' id='sendButton'>Send</button>
+<br><br><br>
+<button type='button' id='button1'>1st Frag</button>
+<div id='fragment1' style='border:1px solid black;'></div>
+<br>
+
+<div id='fragment2' style='border:1px solid black;'></div>
+<button type='button' id='button2'>2nd Frag</button>
+<br>
+
+<button type='button' id='button3'>3rd Frag</button>
+<div id='fragment3' style='border:1px solid black;'></div>
+<br>
+
+</form>
+
+<div id='loader' style='border:1px solid black;background:lightgray;display:none;width:100vw;height:100vh;position:fixed;top:0;left:0'>Loading...</div>
+
+</body>
+</html>
+
