@@ -1,0 +1,3 @@
+[submodule "apps/JavaProjects-webapp"]
+	path = apps/JavaProjects-webapp
+	url = https://github.com/pshrote-afk/JavaProjects-webapp.git
