@@ -1,1 +1,14 @@
-logs/
+# Ignore everything
+*
+
+# BUT keep these folders
+!apps/
+!webapps/
+
+# Keep Git internal files
+!.gitignore
+!.gitattributes
+!.gitmodules
+
+# Keep the .git folder (Git always keeps it even if ignored)
+!/.git/
